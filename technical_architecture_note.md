@@ -4,7 +4,7 @@ This document maps out jhana.ai audit and while answering questions and details 
 
 ## 1. The 5-Level Macro Architecture (Vision for Jhana Audit)
 
-*This is the conceptual orchestration pipeline envisioned for the Statutory Audit to Form 26 transition, mapping exactly how data flows from ingestion to partner sign-off.*
+*This is the conceptual orchestration pipeline envisioned for the Statutory Audit to Form 26 transition, mapping exactly how data flows from ingestion to auditor sign-off.*
 
 | Pipeline Level | System Function & AI Role | Outputs & Handoff | Mapping to Present Jhana Architecture |
 | :--- | :--- | :--- | :--- |
