@@ -1641,7 +1641,202 @@
     </section>
   </div>
 
+  <!-- LEDGER RECONCILIATION MODAL -->
+  <div id="ledgerModal"
+    style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); backdrop-filter: blur(12px); z-index: 10000; justify-content: center; align-items: center;">
+    <div
+      style="background: #090A14; width: 900px; max-width: 95vw; max-height: 85vh; overflow-y: auto; border-radius: 8px; padding: 40px; box-shadow: 0 24px 64px rgba(0,0,0,0.4); position: relative; border: 1px solid rgba(255,255,255,0.1);">
+      <button
+        style="position: absolute; top: 24px; right: 24px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); font-size: 20px; cursor: pointer; color: rgba(255,255,255,0.5); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.2s;"
+        onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.color='#fff';"
+        onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.color='rgba(255,255,255,0.5)';"
+        onclick="document.getElementById('ledgerModal').style.display='none'">×</button>
+
+      <div
+        style="margin-bottom: 32px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px; display:flex; align-items:flex-start; justify-content:space-between;">
+        <div>
+          <div
+            style="font-size: 11px; color: #F2C94C; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 6px;">
+            Target Evidence Node</div>
+          <h2 id="ledgerModalTitle" style="margin: 0; font-size: 24px; color: #FFFFFF; font-weight: 600;">Reconciliation
+            Findings</h2>
+          <div id="ledgerModalDesc" style="font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 8px;">
+            Pixel-precise automated matching between internal ledgers and external bank statements.</div>
+        </div>
+        <div
+          style="background: rgba(39, 174, 96, 0.1); border: 1px solid rgba(39, 174, 96, 0.3); color: #27AE60; padding: 8px 16px; border-radius: 4px; font-family: monospace; font-size: 12px; font-weight: bold;">
+          ✓ MATCH VERIFIED
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <!-- LEFT PANE: LEDGER -->
+        <div
+          style="background: #11121C; border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; padding: 20px; font-family: monospace;">
+          <div id="ledgerSource1"
+            style="color: rgba(255,255,255,0.7); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px;">
+            Source 1: Internal Ledger (Tally)</div>
+          <div
+            style="font-size: 10px; color: rgba(255,255,255,0.5); margin-bottom: 8px; display: grid; grid-template-columns: 60px 1fr 80px; gap: 8px;">
+            <span id="ledgerH1_1">DATE</span><span id="ledgerH1_2">PARTICULARS</span><span id="ledgerH1_3"
+              style="text-align:right;">DEBIT (₹)</span>
+          </div>
+          <div id="ledgerTallyRows"
+            style="font-size: 12px; color: rgba(255,255,255,0.9); display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 8px;"><span>04/11</span><span>TechCorp
+                Solutions</span><span style="text-align:right;">12,500</span></div>
+            <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 8px;"><span>05/11</span><span>Office
+                Supplies</span><span style="text-align:right;">3,200</span></div>
+            <!-- Highlighted Target Row -->
+            <div
+              style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 8px; background: rgba(242, 201, 76, 0.15); border: 1px solid #F2C94C; border-radius: 4px; padding: 6px; margin: -6px; color: #fff; box-shadow: 0 0 12px rgba(242, 201, 76, 0.1);">
+              <span>07/11</span><span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Vendor Pmt -
+                ACME Corp</span><span style="text-align:right; color:#F2C94C; font-weight:bold;">1,45,000</span>
+            </div>
+            <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 8px;"><span>09/11</span><span>GST
+                Payment</span><span style="text-align:right;">45,800</span></div>
+            <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 8px;">
+              <span>10/11</span><span>Consulting Fees</span><span style="text-align:right;">22,000</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT PANE: BANK STATEMENT -->
+        <div
+          style="background: #E8ECEF; border: 1px solid #D0D5DD; border-radius: 6px; padding: 20px; font-family: monospace; color: #333; position: relative; overflow: hidden;">
+          <div
+            style="position:absolute; top: 12px; right: 16px; opacity: 0.1; font-size: 40px; font-family: sans-serif; font-weight: 900; font-style: italic;">
+            HDFC</div>
+          <div id="ledgerSource2"
+            style="color: #666; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; border-bottom: 1px dashed #CCC; padding-bottom: 8px;">
+            Source 2: Bank Statement (OCR)</div>
+          <div
+            style="font-size: 10px; color: #888; margin-bottom: 8px; display: grid; grid-template-columns: 60px 1fr 80px; gap: 8px;">
+            <span id="ledgerH2_1">DATE</span><span id="ledgerH2_2">NARRATION</span><span id="ledgerH2_3"
+              style="text-align:right;">WITHDRAWAL</span>
+          </div>
+          <div id="ledgerBankRows"
+            style="font-size: 12px; color: #444; display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 8px;"><span>04/11</span><span
+                style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">NEFT-TECHCORP-012</span><span
+                style="text-align:right;">12,500</span></div>
+            <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 8px;"><span>05/11</span><span
+                style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">POS DEBIT/STAPLES</span><span
+                style="text-align:right;">3,200</span></div>
+            <!-- Highlighted Target Row -->
+            <div
+              style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 8px; background: rgba(242, 201, 76, 0.25); border: 1.5px solid #E67E22; border-radius: 4px; padding: 6px; margin: -6px; color: #000; box-shadow: 0 4px 12px rgba(230, 126, 34, 0.2);">
+              <span>07/11</span><span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">RTGS-ACME
+                CORP-REF892</span><span style="text-align:right; color:#D35400; font-weight:bold;">1,45,000</span>
+            </div>
+            <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 8px;"><span>10/11</span><span
+                style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">UPI/GSTN/TAX</span><span
+                style="text-align:right;">45,800</span></div>
+            <div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 8px;"><span>12/11</span><span
+                style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">IMPS-CONSULT-991</span><span
+                style="text-align:right;">22,000</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        style="margin-top: 32px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 16px 24px; border-radius: 6px; display: flex; align-items: center; justify-content: space-between;">
+        <div id="ledgerModalFooter" style="color: rgba(255,255,255,0.7); font-size: 13px; line-height: 1.5;">
+          <strong style="color: #fff;">Automated Execution:</strong> The system ingested the messy ledger, mapped it
+          against the unstructured bank statement, executed the reconciliation, and extracted this exact node as proof.
+        </div>
+        <svg style="flex-shrink: 0; margin-left: 16px;" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="#27AE60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+    </div>
+  </div>
+
   <script>
+    const MOCK_LEDGERS = [
+      {
+        s1: 'Source 1: Internal Ledger (Tally)',
+        s2: 'Source 2: Bank Statement (OCR)',
+        h1: ['DATE', 'PARTICULARS', 'DEBIT (₹)'],
+        h2: ['DATE', 'NARRATION', 'WITHDRAWAL'],
+        tally: [
+          { d: '04/11', p: 'TechCorp Solutions', a: '12,500' },
+          { d: '05/11', p: 'Office Supplies', a: '3,200' },
+          { d: '07/11', p: 'Vendor Pmt - ACME Corp', a: '1,45,000', h: true },
+          { d: '09/11', p: 'GST Payment', a: '45,800' },
+          { d: '10/11', p: 'Consulting Fees', a: '22,000' }
+        ],
+        bank: [
+          { d: '04/11', p: 'NEFT-TECHCORP-012', a: '12,500' },
+          { d: '05/11', p: 'POS DEBIT/STAPLES', a: '3,200' },
+          { d: '07/11', p: 'RTGS-ACME CORP-REF892', a: '1,45,000', h: true },
+          { d: '10/11', p: 'UPI/GSTN/TAX', a: '45,800' },
+          { d: '12/11', p: 'IMPS-CONSULT-991', a: '22,000' }
+        ]
+      },
+      {
+        s1: 'Source 1: Cap Table (Carta)',
+        s2: 'Source 2: Valuation Report (PDF)',
+        h1: ['DATE', 'EQUITY CLASS', 'SHARES'],
+        h2: ['DATE', 'VALUATION CLASS', 'FMV / SHARE'],
+        tally: [
+          { d: '01/04', p: 'Common Stock', a: '1,500' },
+          { d: '03/04', p: 'Series A', a: '12,000' },
+          { d: '05/04', p: 'Series B - Tranche 1', a: '5,50,000', h: true },
+          { d: '12/04', p: 'ESOP Pool', a: '85,000' },
+          { d: '15/04', p: 'Warrants', a: '45,000' }
+        ],
+        bank: [
+          { d: '01/04', p: 'Common - Voting', a: '1,500' },
+          { d: '04/04', p: 'Pref A - NonVoting', a: '12,000' },
+          { d: '05/04', p: 'Pref B - T1', a: '5,50,000', h: true },
+          { d: '12/04', p: 'Employee Options', a: '85,000' },
+          { d: '15/04', p: 'Warrants - Q2', a: '45,000' }
+        ]
+      },
+      {
+        s1: 'Source 1: Statutory Register',
+        s2: 'Source 2: Filed Return (MCA)',
+        h1: ['DATE', 'FILING REF', 'FEE PAID'],
+        h2: ['DATE', 'CHALLAN NO', 'AMOUNT'],
+        tally: [
+          { d: '12/09', p: 'AOC-4 FY24', a: '50,000' },
+          { d: '14/09', p: 'MGT-7 Annual', a: '5,000' },
+          { d: '18/09', p: 'DIR-12 Changes', a: '1,20,000', h: true },
+          { d: '22/09', p: 'PAS-3 Return', a: '15,000' },
+          { d: '25/09', p: 'SH-7 Capital', a: '80,000' }
+        ],
+        bank: [
+          { d: '13/09', p: 'SRN-AOC4-991', a: '50,000' },
+          { d: '15/09', p: 'SRN-MGT7-882', a: '5,000' },
+          { d: '18/09', p: 'SRN-DIR12-773', a: '1,20,000', h: true },
+          { d: '23/09', p: 'SRN-PAS3-664', a: '15,000' },
+          { d: '26/09', p: 'SRN-SH7-555', a: '80,000' }
+        ]
+      },
+      {
+        s1: 'Source 1: System Record',
+        s2: 'Source 2: Provided Evidence',
+        h1: ['DATE', 'RECORD ID', 'VALUE'],
+        h2: ['DATE', 'EVIDENCE REF', 'EXTRACT'],
+        tally: [
+          { d: '10/01', p: 'SYS-REC-001', a: '10,000' },
+          { d: '12/01', p: 'SYS-REC-002', a: '25,000' },
+          { d: '15/01', p: 'SYS-REC-003', a: '30,000', h: true },
+          { d: '18/01', p: 'SYS-REC-004', a: '15,000' },
+          { d: '20/01', p: 'SYS-REC-005', a: '40,000' }
+        ],
+        bank: [
+          { d: '10/01', p: 'EVID-DOC-001', a: '10,000' },
+          { d: '13/01', p: 'EVID-DOC-002', a: '25,000' },
+          { d: '15/01', p: 'EVID-DOC-003', a: '30,000', h: true },
+          { d: '19/01', p: 'EVID-DOC-004', a: '15,000' },
+          { d: '21/01', p: 'EVID-DOC-005', a: '40,000' }
+        ]
+      }
+    ];
+
     /* ═══════════ CLAUSE DATA — mirrors the actual Form 26 layout ═══════════ */
     const clauses = [
       // PART A (General Information)
@@ -1844,7 +2039,7 @@
             stamp: 'PARTIAL', tilt: -2.4
           },
           {
-            name: 'Ramesh &amp; Sons Trading', sub1: 'Bearer cheque (Code K)', amt: '14,20,000', date: '03-Sep-2025', src: 'Bearer cheque copy', conf: 85, confLvl: 'high', status: 'Lender confirmed',
+            name: 'Ramesh & Sons Trading', sub1: 'Bearer cheque (Code K)', amt: '14,20,000', date: '03-Sep-2025', src: 'Bearer cheque copy', conf: 85, confLvl: 'high', status: 'Lender confirmed',
             summary: 'Lender identity confirmed by written confirmation, but mode remains non-account-payee.',
             json: `\n{\n  "drawer": "Ramesh & Sons Trading",\n  "amount": 1420000,\n  "date": "03-Sep-2025",\n  "payable_to": "Bearer",\n  "bank_endorsement": "Cleared, non-a/c payee"\n}\n`,
             letter: 'BEARER CHEQUE', sub: 'Cheque no. 004821',
@@ -3142,7 +3337,7 @@
     function openDetail(i) {
       const a = ARTIFACTS[currentArtifact];
       const r = a.rows[i];
-      document.getElementById('v4eyebrow').textContent = `04 · Expanded artifact · Clause ${a.clauseN}`;
+      document.getElementById('v4eyebrow').textContent = `Expanded artifact · Clause ${a.clauseN}`;
       document.getElementById('detailTitle').textContent = r.name;
       // document.getElementById('d-raw').textContent = r.src;
       // document.getElementById('d-schema').textContent = Object.keys(JSON.parse(r.json.replace(/(\w+):/g, '"$1":'))).join(' · ');
@@ -3156,24 +3351,85 @@
       document.getElementById('d-conf').className = 'conf ' + r.confLvl;
 
       let nodeName = 'System Graph Node';
-      if (a.macro.includes('Call 1')) nodeName = 'Reconciliation Findings Node';
-      else if (a.macro.includes('Call 2')) nodeName = 'Tax Arithmetic Findings Node';
-      else if (a.macro.includes('Call 3')) nodeName = 'Valuation Findings Node';
-      else if (a.macro.includes('Call 4')) nodeName = 'Recognition Findings Node';
-      else if (a.macro.includes('Call 5')) nodeName = 'Compliance Findings Node';
-      else if (a.macro.includes('Call 6')) nodeName = 'Risk Findings Node';
+      let nodeDesc = 'Automated matching between system records and provided evidence.';
+      if (a.macro.includes('Call 1')) { nodeName = 'Reconciliation Findings Node'; nodeDesc = 'Pixel-precise automated matching between internal ledgers and external bank statements.'; }
+      else if (a.macro.includes('Call 2')) { nodeName = 'Tax Arithmetic Findings Node'; nodeDesc = 'Automated recalculation of tax liabilities and matching against filed returns.'; }
+      else if (a.macro.includes('Call 3')) { nodeName = 'Valuation Findings Node'; nodeDesc = 'Validation of valuation models and matching with underlying assumptions.'; }
+      else if (a.macro.includes('Call 4')) { nodeName = 'Recognition Findings Node'; nodeDesc = 'Analysis of revenue recognition criteria and matching with accounting standards.'; }
+      else if (a.macro.includes('Call 5')) { nodeName = 'Compliance Findings Node'; nodeDesc = 'Verification of statutory compliance requirements against filed forms.'; }
+      else if (a.macro.includes('Call 6')) { nodeName = 'Risk Findings Node'; nodeDesc = 'Identification of potential risk areas and anomalies within the evidence graph.'; }
 
-      document.getElementById('d-evnode').innerHTML = `<span class="badge" style="background:#F2C94C; color:#333; font-weight:600;">${nodeName}</span>`;
+      document.getElementById('d-evnode').innerHTML = `
+        <span class="badge" style="background:#F2C94C; color:#333; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(242, 201, 76, 0.2); transition:0.2s;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 16px rgba(242, 201, 76, 0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(242, 201, 76, 0.2)';" onclick="document.getElementById('ledgerModalTitle').textContent='${nodeName}'; document.getElementById('ledgerModalDesc').textContent='${nodeDesc}'; document.getElementById('ledgerModal').style.display='flex'">${nodeName} ↗</span>
+      `;
+
+      let mockIdx = 3; // Default
+      if (a.macro.includes('Call 1')) mockIdx = 0; // Reconciliation
+      else if (a.macro.includes('Call 3')) mockIdx = 1; // Valuation
+      else if (a.macro.includes('Call 5')) mockIdx = 2; // Compliance
+
+      const baseLedger = MOCK_LEDGERS[mockIdx];
+      const ledger = JSON.parse(JSON.stringify(baseLedger));
+
+      // Dynamically inject artifact details into the highlighted row
+      if (r) {
+        const tIdx = ledger.tally.findIndex(x => x.h);
+        if (tIdx >= 0) {
+          ledger.tally[tIdx].p = r.name || ledger.tally[tIdx].p;
+          if (r.amt) ledger.tally[tIdx].a = r.amt;
+        }
+        const bIdx = ledger.bank.findIndex(x => x.h);
+        if (bIdx >= 0) {
+          ledger.bank[bIdx].p = r.name ? r.name.toUpperCase() : ledger.bank[bIdx].p;
+          if (r.amt) ledger.bank[bIdx].a = r.amt;
+        }
+      }
+
+      // Update footer text based on the mockIdx context
+      const footers = [
+        '<strong style="color: #fff;">Automated Execution:</strong> The system ingested the messy ledger, mapped it against the unstructured bank statement, executed the reconciliation, and extracted this exact node as proof.',
+        '<strong style="color: #fff;">Automated Execution:</strong> The system ingested the capitalization table, mapped it against the certified valuation report, validated the FMV computation, and extracted this exact node as proof.',
+        '<strong style="color: #fff;">Automated Execution:</strong> The system ingested the statutory register, mapped it against the filed MCA returns, verified the fee paid and challans, and extracted this exact node as proof.',
+        '<strong style="color: #fff;">Automated Execution:</strong> The system ingested the internal records, mapped them against external evidence documents, executed a semantic validation, and extracted this exact node as proof.'
+      ];
+      document.getElementById('ledgerModalFooter').innerHTML = footers[mockIdx] || footers[0];
+
+      document.getElementById('ledgerSource1').textContent = ledger.s1;
+      document.getElementById('ledgerSource2').textContent = ledger.s2;
+      document.getElementById('ledgerH1_1').textContent = ledger.h1[0];
+      document.getElementById('ledgerH1_2').textContent = ledger.h1[1];
+      document.getElementById('ledgerH1_3').textContent = ledger.h1[2];
+      document.getElementById('ledgerH2_1').textContent = ledger.h2[0];
+      document.getElementById('ledgerH2_2').textContent = ledger.h2[1];
+      document.getElementById('ledgerH2_3').textContent = ledger.h2[2];
+
+      document.getElementById('ledgerTallyRows').innerHTML = ledger.tally.map(row => {
+        if (row.h) {
+          return `<div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 8px; background: rgba(242, 201, 76, 0.15); border: 1px solid #F2C94C; border-radius: 4px; padding: 6px; margin: -6px; color: #fff; box-shadow: 0 0 12px rgba(242, 201, 76, 0.1);">
+            <span>${row.d}</span><span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${row.p}</span><span style="text-align:right; color:#F2C94C; font-weight:bold;">${row.a}</span>
+          </div>`;
+        }
+        return `<div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 8px;"><span>${row.d}</span><span>${row.p}</span><span style="text-align:right;">${row.a}</span></div>`;
+      }).join('');
+
+      document.getElementById('ledgerBankRows').innerHTML = ledger.bank.map(row => {
+        if (row.h) {
+          return `<div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 8px; background: rgba(242, 201, 76, 0.25); border: 1.5px solid #E67E22; border-radius: 4px; padding: 6px; margin: -6px; color: #000; box-shadow: 0 4px 12px rgba(230, 126, 34, 0.2);">
+            <span>${row.d}</span><span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${row.p}</span><span style="text-align:right; color:#D35400; font-weight:bold;">${row.a}</span>
+          </div>`;
+        }
+        return `<div style="display: grid; grid-template-columns: 60px 1fr 80px; gap: 8px;"><span>${row.d}</span><span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${row.p}</span><span style="text-align:right;">${row.a}</span></div>`;
+      }).join('');
 
       const isFlagged = r.status !== 'Verified' && r.status !== 'Matched';
       let catHTML = '';
       if (!isFlagged) {
-        catHTML = `<span class="badge" style="background:#27AE60; color:#fff;">✓ Verified (No Qualification)</span>`;
-        document.getElementById('d-lineage').innerHTML = `<span class="badge" style="background:#27AE60; color:#fff;">✓ Pixel-Precise Trace Verified</span>`;
-        document.getElementById('d-manager').innerHTML = `<span class="badge" style="background:#27AE60; color:#fff;">✓ Cross-Module Contradictions: 0</span>`;
+        catHTML = `<span class="badge" style="background:#27AE60; color:#fff;">Verified (No Qualification)</span>`;
+        document.getElementById('d-lineage').innerHTML = `<span class="badge" style="background:#27AE60; color:#fff;">Trace Verified</span>`;
+        document.getElementById('d-manager').innerHTML = `<span class="badge" style="background:#27AE60; color:#fff;"> Cross-Module Contradictions: 0</span>`;
       } else {
-        document.getElementById('d-lineage').innerHTML = `<span class="badge" style="background:rgba(0,0,0,0.05); color:#A0A6B8; border:1px solid rgba(0,0,0,0.1);">Trace Incomplete</span>`;
-        document.getElementById('d-manager').innerHTML = `<span class="badge" style="background:#4A4FC4; color:#fff; box-shadow:0 2px 4px rgba(74,79,196,0.3);">Exception Flagged</span>`;
+        document.getElementById('d-lineage').innerHTML = `<div style="position: relative; display: inline-block;" onmouseover="this.querySelector('.tt').style.display='block'" onmouseout="this.querySelector('.tt').style.display='none'"><span class="badge" style="background:rgba(0,0,0,0.05); color:#A0A6B8; border:1px solid rgba(0,0,0,0.1); cursor:help;">Trace Incomplete</span><div class="tt" style="display: none; position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%); background: #1A1B1F; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 11px; width: 220px; white-space: normal; line-height: 1.5; box-shadow: 0 8px 24px rgba(0,0,0,0.25); z-index: 9999; text-transform: none; letter-spacing: normal; font-weight: 400; font-family: 'IBM Plex Serif', Georgia, serif; text-align: center;">The system could not definitively trace and reconcile this entry across all underlying source documents.<div style="position:absolute; bottom:-4px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:5px solid #1A1B1F;"></div></div></div>`;
+        document.getElementById('d-manager').innerHTML = `<div style="position: relative; display: inline-block;" onmouseover="this.querySelector('.tt').style.display='block'" onmouseout="this.querySelector('.tt').style.display='none'"><span class="badge" style="background:#4A4FC4; color:#fff; box-shadow:0 2px 4px rgba(74,79,196,0.3); cursor:help;">Exception Flagged</span><div class="tt" style="display: none; position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%); background: #1A1B1F; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 11px; width: 240px; white-space: normal; line-height: 1.5; box-shadow: 0 8px 24px rgba(0,0,0,0.25); z-index: 9999; text-transform: none; letter-spacing: normal; font-weight: 400; font-family: 'IBM Plex Serif', Georgia, serif; text-align: center;">An anomaly or variance was detected that requires manual review, adjustment, or management representation.<div style="position:absolute; bottom:-4px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:5px solid #1A1B1F;"></div></div></div>`;
         const types = ['Test-check basis', 'Mgmt Rep', 'Unable to verify'];
         const activeIdx = (r.name.length + currentArtifact.length) % 3;
 

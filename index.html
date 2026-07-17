@@ -194,6 +194,357 @@
         display: none;
       }
     }
+
+    .arch-modal {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(9, 10, 20, 0.95);
+      backdrop-filter: blur(10px);
+      overflow-y: auto;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .arch-modal.show {
+      display: block;
+      opacity: 1;
+    }
+
+    .arch-modal-content {
+      background: #090A14;
+      margin: 5% auto;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 1100px;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      font-family: "IBM Plex Serif", Georgia, serif;
+      color: #F0F1F6;
+      line-height: 1.6;
+      animation: slideUp 0.4s ease;
+      margin-bottom: 100px;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .arch-close {
+      color: rgba(160, 166, 184, 0.45);
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    .arch-close:hover {
+      color: #F0F1F6;
+    }
+
+    .arch-modal-content h1 {
+      font-size: 32px;
+      margin-top: 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 16px;
+    }
+
+    .arch-modal-content h2 {
+      font-size: 22px;
+      color: #B4B8C5;
+      margin-top: 40px;
+      margin-bottom: 16px;
+    }
+
+    .arch-modal-content h3 {
+      font-size: 16px;
+      font-family: "JetBrains Mono", monospace;
+      color: #3FAE7A;
+      margin-top: 24px;
+      margin-bottom: 8px;
+    }
+
+    .arch-modal-content p {
+      font-size: 14px;
+      color: rgba(240, 241, 246, 0.65);
+      margin-bottom: 16px;
+    }
+
+    .arch-modal-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 13px;
+    }
+
+    .arch-modal-content th,
+    .arch-modal-content td {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 16px;
+      vertical-align: top;
+    }
+
+    .arch-modal-content th {
+      background: rgba(255, 255, 255, 0.02);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      color: #B4B8C5;
+      text-align: left;
+    }
+
+    .arch-modal-content td {
+      color: rgba(240, 241, 246, 0.8);
+    }
+
+    .arch-modal-content td b {
+      color: #fff;
+    }
+
+    .arch-modal-content ul {
+      color: rgba(240, 241, 246, 0.65);
+      font-size: 14px;
+      padding-left: 20px;
+    }
+
+    .arch-modal-content li {
+      margin-bottom: 8px;
+    }
+
+    .title-link {
+      cursor: pointer;
+      transition: color 0.2s, opacity 0.2s;
+    }
+
+    .title-link:hover {
+      color: #5B8DEF !important;
+      opacity: 1 !important;
+      text-decoration: none;
+    }
+
+    .bdg-ai {
+      color: #3FAE7A;
+      background: rgba(63, 174, 122, 0.1);
+      border: 1px solid rgba(63, 174, 122, 0.25);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    .bdg-sys {
+      color: #C99A3D;
+      background: rgba(201, 154, 61, 0.1);
+      border: 1px solid rgba(201, 154, 61, 0.25);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    .bdg-new {
+      color: #5B8DEF;
+      background: rgba(91, 141, 239, 0.1);
+      border: 1px solid rgba(91, 141, 239, 0.25);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    .bdg-warn {
+      color: #C0392B;
+      background: rgba(192, 57, 43, 0.1);
+      border: 1px solid rgba(192, 57, 43, 0.25);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    .arch-modal-content table {
+      border-collapse: separate;
+      border-spacing: 0 8px;
+      margin-top: 24px;
+      border: none;
+    }
+
+    .arch-modal-content th {
+      border: none;
+      padding-bottom: 0;
+      padding-left: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #787E91;
+    }
+
+    .arch-modal-content td {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      transition: background 0.3s;
+      line-height: 1.5;
+    }
+
+    .arch-modal-content tr:hover td {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .arch-modal-content td:first-child {
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+      border-right: none;
+      width: 30%;
+      color: #A0A6B8;
+    }
+
+    .arch-modal-content td:nth-child(2) {
+      width: 35%;
+      border-right: none;
+    }
+
+    .arch-modal-content td:last-child {
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+
+    .lvl-title {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 13px;
+      color: #F0F1F6;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .highlight-text {
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .net-new-box {
+      background: linear-gradient(90deg, rgba(91, 141, 239, 0.08) 0%, rgba(0, 0, 0, 0) 100%);
+      border-left: 3px solid #5B8DEF;
+      padding: 24px;
+      border-radius: 0 8px 8px 0;
+      margin: 32px 0;
+    }
+
+    .net-new-box h3 {
+      color: #5B8DEF;
+      margin-top: 0;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .toc-container {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 24px 0;
+    }
+
+    .toc-container h3 {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      color: #5B8DEF;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+
+    .toc-list,
+    .toc-sublist {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-list>li {
+      margin-bottom: 12px;
+    }
+
+    .toc-list>li:last-child {
+      margin-bottom: 0;
+    }
+
+    .toc-list a {
+      color: #F0F1F6;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .toc-list a:hover {
+      color: #5B8DEF;
+    }
+
+    .toc-sublist {
+      margin-top: 8px;
+      padding-left: 16px;
+      border-left: 1px dashed rgba(255, 255, 255, 0.1);
+      margin-left: 6px;
+    }
+
+    .toc-sublist li {
+      margin-bottom: 8px;
+    }
+
+    .toc-sublist li:last-child {
+      margin-bottom: 0;
+    }
+
+    .toc-sublist a {
+      color: rgba(240, 241, 246, 0.7);
+      font-size: 13px;
+      font-weight: 400;
+    }
+
+    .toc-sublist a:hover {
+      color: #F0F1F6;
+    }
   </style>
 </head>
 
@@ -202,7 +553,8 @@
   <div class="bar">
     <div class="brand">
       <svg id="jhana-icon" viewBox="0 0 552 548" style="width: 16px; height: auto; overflow: visible;">
-        <path id="jhana-line" class="jhana-line" d="M 265.5 242.0 C 265.6 245.8 265.9 256.2 266.0 264.5 C 266.1 272.8 266.0 282.5 266.0 291.5 C 266.0 300.5 266.0 309.5 266.0 318.5 C 266.0 327.5 266.1 336.5 266.0 345.5 C 265.9 354.5 266.0 363.5 265.5 372.5 C 265.0 381.5 264.8 390.5 263.0 399.5 C 261.2 408.5 260.3 418.2 255.0 426.5 C 249.7 434.8 239.5 444.3 231.0 449.5 C 222.5 454.7 213.0 456.5 204.0 457.5 C 195.0 458.5 186.0 457.4 177.0 455.5 C 168.0 453.6 159.0 450.2 150.0 446.0 C 141.0 441.8 132.0 436.4 123.0 430.0 C 114.0 423.6 104.3 415.8 96.0 407.5 C 87.7 399.2 79.5 389.5 73.0 380.5 C 66.5 371.5 61.6 362.5 57.0 353.5 C 52.4 344.5 48.7 335.5 45.5 326.5 C 42.3 317.5 39.8 308.5 38.0 299.5 C 36.2 290.5 35.2 281.5 34.5 272.5 C 33.8 263.5 33.7 254.5 34.0 245.5 C 34.3 236.5 35.1 227.5 36.5 218.5 C 37.9 209.5 39.8 200.5 42.5 191.5 C 45.2 182.5 48.5 173.5 52.5 164.5 C 56.5 155.5 60.8 146.5 66.5 137.5 C 72.2 128.5 78.8 119.3 86.5 110.5 C 94.2 101.7 103.7 92.1 112.5 84.5 C 121.3 76.9 130.5 70.6 139.5 65.0 C 148.5 59.4 157.5 55.1 166.5 51.0 C 175.5 46.9 184.5 43.3 193.5 40.5 C 202.5 37.7 211.5 35.6 220.5 34.0 C 229.5 32.4 238.5 31.5 247.5 31.0 C 256.5 30.5 265.5 30.5 274.5 31.0 C 283.5 31.5 292.5 32.4 301.5 34.0 C 310.5 35.6 319.5 37.8 328.5 40.5 C 337.5 43.2 346.5 46.5 355.5 50.5 C 364.5 54.5 373.5 59.0 382.5 64.5 C 391.5 70.0 400.6 76.1 409.5 83.5 C 418.4 90.9 428.1 100.2 436.0 109.0 C 443.9 117.8 450.8 127.0 457.0 136.0 C 463.2 145.0 468.5 154.0 473.0 163.0 C 477.5 172.0 480.8 181.0 484.0 190.0 C 487.2 199.0 489.9 208.0 492.0 217.0 C 494.1 226.0 495.5 235.0 496.5 244.0 C 497.5 253.0 498.0 262.0 498.0 271.0 C 498.0 280.0 497.3 289.0 496.5 298.0 C 495.7 307.0 494.8 316.0 493.0 325.0 C 491.2 334.0 488.5 343.0 485.5 352.0 C 482.5 361.0 479.2 370.0 475.0 379.0 C 470.8 388.0 466.2 397.0 460.5 406.0 C 454.8 415.0 448.5 424.1 441.0 433.0 C 433.5 441.9 424.2 451.6 415.5 459.5 C 406.8 467.4 397.5 474.2 388.5 480.5 C 379.5 486.8 370.5 492.2 361.5 497.0 C 352.5 501.8 343.5 505.6 334.5 509.0 C 325.5 512.4 316.5 515.2 307.5 517.5 C 298.5 519.8 289.5 521.7 280.5 523.0 C 271.5 524.3 262.5 525.2 253.5 525.5 C 244.5 525.8 235.5 525.6 226.5 525.0 C 217.5 524.4 208.5 523.5 199.5 522.0 C 190.5 520.5 181.5 518.5 172.5 516.0 C 163.5 513.5 154.5 510.4 145.5 507.0 C 136.5 503.6 123.0 497.4 118.5 495.5" />
+        <path id="jhana-line" class="jhana-line"
+          d="M 265.5 242.0 C 265.6 245.8 265.9 256.2 266.0 264.5 C 266.1 272.8 266.0 282.5 266.0 291.5 C 266.0 300.5 266.0 309.5 266.0 318.5 C 266.0 327.5 266.1 336.5 266.0 345.5 C 265.9 354.5 266.0 363.5 265.5 372.5 C 265.0 381.5 264.8 390.5 263.0 399.5 C 261.2 408.5 260.3 418.2 255.0 426.5 C 249.7 434.8 239.5 444.3 231.0 449.5 C 222.5 454.7 213.0 456.5 204.0 457.5 C 195.0 458.5 186.0 457.4 177.0 455.5 C 168.0 453.6 159.0 450.2 150.0 446.0 C 141.0 441.8 132.0 436.4 123.0 430.0 C 114.0 423.6 104.3 415.8 96.0 407.5 C 87.7 399.2 79.5 389.5 73.0 380.5 C 66.5 371.5 61.6 362.5 57.0 353.5 C 52.4 344.5 48.7 335.5 45.5 326.5 C 42.3 317.5 39.8 308.5 38.0 299.5 C 36.2 290.5 35.2 281.5 34.5 272.5 C 33.8 263.5 33.7 254.5 34.0 245.5 C 34.3 236.5 35.1 227.5 36.5 218.5 C 37.9 209.5 39.8 200.5 42.5 191.5 C 45.2 182.5 48.5 173.5 52.5 164.5 C 56.5 155.5 60.8 146.5 66.5 137.5 C 72.2 128.5 78.8 119.3 86.5 110.5 C 94.2 101.7 103.7 92.1 112.5 84.5 C 121.3 76.9 130.5 70.6 139.5 65.0 C 148.5 59.4 157.5 55.1 166.5 51.0 C 175.5 46.9 184.5 43.3 193.5 40.5 C 202.5 37.7 211.5 35.6 220.5 34.0 C 229.5 32.4 238.5 31.5 247.5 31.0 C 256.5 30.5 265.5 30.5 274.5 31.0 C 283.5 31.5 292.5 32.4 301.5 34.0 C 310.5 35.6 319.5 37.8 328.5 40.5 C 337.5 43.2 346.5 46.5 355.5 50.5 C 364.5 54.5 373.5 59.0 382.5 64.5 C 391.5 70.0 400.6 76.1 409.5 83.5 C 418.4 90.9 428.1 100.2 436.0 109.0 C 443.9 117.8 450.8 127.0 457.0 136.0 C 463.2 145.0 468.5 154.0 473.0 163.0 C 477.5 172.0 480.8 181.0 484.0 190.0 C 487.2 199.0 489.9 208.0 492.0 217.0 C 494.1 226.0 495.5 235.0 496.5 244.0 C 497.5 253.0 498.0 262.0 498.0 271.0 C 498.0 280.0 497.3 289.0 496.5 298.0 C 495.7 307.0 494.8 316.0 493.0 325.0 C 491.2 334.0 488.5 343.0 485.5 352.0 C 482.5 361.0 479.2 370.0 475.0 379.0 C 470.8 388.0 466.2 397.0 460.5 406.0 C 454.8 415.0 448.5 424.1 441.0 433.0 C 433.5 441.9 424.2 451.6 415.5 459.5 C 406.8 467.4 397.5 474.2 388.5 480.5 C 379.5 486.8 370.5 492.2 361.5 497.0 C 352.5 501.8 343.5 505.6 334.5 509.0 C 325.5 512.4 316.5 515.2 307.5 517.5 C 298.5 519.8 289.5 521.7 280.5 523.0 C 271.5 524.3 262.5 525.2 253.5 525.5 C 244.5 525.8 235.5 525.6 226.5 525.0 C 217.5 524.4 208.5 523.5 199.5 522.0 C 190.5 520.5 181.5 518.5 172.5 516.0 C 163.5 513.5 154.5 510.4 145.5 507.0 C 136.5 503.6 123.0 497.4 118.5 495.5" />
         <g transform="translate(0,548) scale(0.1,-0.1)">
           <path id="jhana-fill-path" class="jhana-fill-path" d="M2402 5339 c-136 -10 -276 -35 -448 -78 -95 -24 -288 -97 -409 -155
           -607 -292 -1053 -793 -1264 -1423 -136 -406 -159 -896 -60 -1293 170 -682 601
@@ -224,7 +576,8 @@
           66 -131 135 -209 165 -51 19 -186 29 -242 17z" />
         </g>
       </svg>
-      jhana.ai <span class="dim">— Tax Audit Problem Set</span>
+      jhana.ai <span class="dim title-link" id="arch-modal-btn" title="View Architecture Mapping"> Tax Audit Problem
+        Set</span>
     </div>
 
     <div class="steps" id="steps">
@@ -294,10 +647,10 @@
       jhanaLine.style.strokeDasharray = len;
       jhanaLine.style.strokeDashoffset = len;
       jhanaLine.style.opacity = 1;
-      
+
       jhanaFillPath.style.transition = 'none';
       jhanaFillPath.style.opacity = 0;
-      
+
       jhanaDotPath.style.transition = 'none';
       jhanaDotPath.style.opacity = 0;
       jhanaDotPath.style.transform = 'scale(0.4)';
@@ -321,7 +674,7 @@
           jhanaDotPath.style.opacity = 1;
           jhanaDotPath.style.transform = 'scale(1)';
         }, 1900);
-        
+
         setTimeout(() => {
           isJhanaAnimating = false;
         }, 2200);
@@ -332,7 +685,325 @@
       jhanaBrand.addEventListener('mouseenter', runJhanaAnimation);
       jhanaBrand.style.cursor = 'pointer';
     }
+
+    // Modal logic for Architecture Mapping
+    const archModal = document.getElementById("arch-modal");
+    const archModalBtn = document.getElementById("arch-modal-btn");
+    const archCloseBtn = document.querySelector(".arch-close");
+
+    if (archModalBtn && archModal) {
+      archModalBtn.onclick = function () {
+        archModal.classList.add("show");
+      }
+      archCloseBtn.onclick = function () {
+        archModal.classList.remove("show");
+      }
+      window.addEventListener("click", function (event) {
+        if (event.target == archModal) {
+          archModal.classList.remove("show");
+        }
+      });
+    }
+
   </script>
+
+
+
+
+
+  <div id="arch-modal" class="arch-modal">
+    <div class="arch-modal-content">
+      <span class="arch-close">&times;</span>
+
+      <h1 style="border:none; margin-bottom:0;">jhana.ai audit</h1>
+      <h2
+        style="margin-top:5px; color:#5B8DEF; font-family:'JetBrains Mono', monospace; font-size:14px; text-transform:uppercase; letter-spacing:2px;">
+        Technical Architecture Mapping</h2>
+
+      <p style="margin-top:24px; font-size:16px;">This document maps out how jhana.ai audit works and while answering
+        some important questions
+        and detailing some important caveats for the present pitch.</p>
+
+      <div class="toc-container">
+        <h3>Index</h3>
+        <ul class="toc-list">
+          <li><a href="#macro-arch">1. The 5-Level Macro Architecture</a></li>
+          <li>
+            <a href="#facts">2. The 6 Core Facts (Flattened)</a>
+            <ul class="toc-sublist">
+              <li><a href="#fact-1">2.1 Central Isomorphism</a></li>
+              <li><a href="#fact-2">2.2 Category of Improvement</a></li>
+              <li><a href="#fact-3">2.3 Type / Role / Ontology / Temporality</a></li>
+              <li><a href="#fact-4">2.4 GPAIs vs. jhana.ai </a></li>
+              <li><a href="#fact-5">2.5 Bespoke to Tax / FDE Build</a></li>
+              <li><a href="#fact-6">2.6 GTM Advantage with Open-Weights</a></li>
+            </ul>
+          </li>
+          <li><a href="#caveats">3. Form 26 Domain Caveats</a></li>
+        </ul>
+      </div>
+
+      <h2 id="macro-arch"
+        style="margin-top: 48px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 16px; scroll-margin-top: 50px;">
+        <span class="bdg-sys">1</span> The 5-Level Macro Architecture
+      </h2>
+      <p><em>The conceptual orchestration pipeline from ingestion to auditor's sign-off. Shows exactly how the "One
+          engine, different docket" principle applies.</em></p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Present Jhana Architecture</th>
+            <th>System Function & AI Role</th>
+            <th>Audit Deck Mapping (Form 26 Demo)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="highlight-text">Jhana Suit (Vision & OCR)</span><br><br>Exact reuse of the existing
+              layout-aware extraction engine that processes messy court scans into bounding boxes.</td>
+            <td><span class="bdg-sys">SYSTEM</span> Directly streams multi-gigabyte structured ledgers, completely
+              bypassing LLM token limits.<br><br><span class="bdg-ai">AI</span> Vision models execute spatial,
+              layout-aware OCR over messy unstructured PDFs (invoices, handwritten notes).</td>
+            <td><span class="lvl-title">Level 1: Raw Ingestion Layer</span>Extracts structured data and pixel-precise
+              bounding boxes from messy ledgers, invoices, and scans.</td>
+          </tr>
+          <tr>
+            <td><span class="highlight-text">Suit Ontological Layer</span><br><br>Reuses the existing Lexicon engine
+              that categorizes unstructured text down to highly specific sub-classes.</td>
+            <td><span class="bdg-sys">SYSTEM</span> Converts raw coordinates into immutable database primitives via
+              deterministic template matching.<br><br><span class="bdg-ai">AI</span> Semantic agents step in only for
+              highly unusual, non-template contracts.</td>
+            <td><span class="lvl-title">Level 2: Typed Schema Matrix</span>Converts unstructured text into
+              strongly-typed accounting and legal primitives (<code>TYPED_OBJECT.JSON</code>).</td>
+          </tr>
+          <tr>
+            <td><span class="highlight-text">Multi-Model Routing & Reflective Agents</span><br><br>Reuses dynamic task
+              routing for semantic interpretation.</td>
+            <td>The pipeline splits into concurrent execution tracks:<br><br>• <span class="bdg-new">NEW</span> <b>Track
+                3A (System Recon):</b> Deterministic joins.<br>• <span class="bdg-ai">AI</span> <b>Track 3B (Auditor
+                Agents):</b> Rule 11UA valuation.<br>• <span class="bdg-ai">AI</span> <b>Track 3C (Compliance):</b>
+              Board minutes reasoning.</td>
+            <td><span class="lvl-title">Level 3: Agentic Discovery Graph</span>Outputs an Exceptions Ledger
+              (mathematical variances) alongside semantic and compliance risk flags.</td>
+          </tr>
+          <tr>
+            <td><span class="highlight-text">Knowledge Graph Traversal (Neo4j)</span><br><br>Identical to how Jhana
+              Courtroom maps multi-hop relationships and finds contradictions across case files.</td>
+            <td><span class="bdg-sys">SYSTEM</span> Deterministically links all flagged exceptions back to their source
+              document IDs.<br><br><span class="bdg-ai">AI</span> Cross-module semantic review tests for holistic
+              contradictions.</td>
+            <td><span class="lvl-title">Level 4: Evidence Graph Synthesis</span>An interconnected Evidence Graph mapped
+              directly against Form No. 26 clauses with pixel-precise trace lines.</td>
+          </tr>
+          <tr>
+            <td><span class="highlight-text">Courtroom Line-Level Verification</span><br><br>Leverages strict citation
+              mapping (no hallucination), native DOCX export, and role-based access controls.</td>
+            <td><span class="bdg-sys">HITL</span> Managers do not read raw PDFs; they review the synthesized graph where
+              every anomaly has direct lineage to its source coordinate.</td>
+            <td><span class="lvl-title">Level 5: Liability Sign-Off Layer</span>Formal sign-offs
+              (<code>Test-check</code>, <code>Mgmt Rep</code>, <code>Qualified</code>) triggering the auto-generated
+              compliant working papers.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="net-new-box">
+        <h3><span class="bdg-new">NET-NEW BUILD</span> Zero-AI System Reconciliation</h3>
+        <p style="margin:0; line-height: 1.6; color: rgba(240, 241, 246, 0.8);"><em>The single net-new capability
+            introduced for this pitch. Built entirely on top of existing infrastructure (ordinary deterministic
+            engineering, not a new AI research problem).</em><br><br>
+          In <b>Level 3: Track 3A</b>, instead of using AI for arithmetic, the system runs purely deterministic joins,
+          array checks, and tolerance matching between massive financial ledgers (Ledger/Bank/GST/26AS). It leverages
+          the structured outputs of the <b>Suit Ontological Layer</b> to perform math safely without hallucination risk.
+        </p>
+      </div>
+
+      <h2 id="facts"
+        style="margin-top: 64px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 16px; scroll-margin-top: 50px;">
+        <span class="bdg-sys">2</span>6 Core Facts
+      </h2>
+
+      <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 24px;">
+        <!-- Fact 1 -->
+        <div id="fact-1"
+          style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 24px; border-radius: 8px; scroll-margin-top: 80px;">
+          <h3 style="margin-top:0; color:#fff; display: flex; justify-content: space-between; align-items: center;">1.
+            Central isomorphism <span
+              style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5B8DEF; background: rgba(91,141,239,0.1); padding: 4px 8px; border-radius: 4px;">↳
+              Seen in "First Principles"</span></h3>
+          <p style="line-height:1.6; margin-bottom: 0;">Same five-stage pipeline run against a different document type
+            per docket: ingest → typed schema → agentic reasoning → evidence graph → sign-off. Courtroom runs it on case
+            files, PubSec on government filings, Audit on ledgers and Form 26. Pipeline shape is constant. Document type
+            changes.</p>
+        </div>
+        <!-- Fact 2 -->
+        <div id="fact-2"
+          style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 24px; border-radius: 8px; scroll-margin-top: 80px;">
+          <h3 style="margin-top:0; color:#fff; display: flex; justify-content: space-between; align-items: center;">2.
+            Category of improvement / whose experience <span
+              style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5B8DEF; background: rgba(91,141,239,0.1); padding: 4px 8px; border-radius: 4px;">↳
+              Seen in "Execution Model"</span></h3>
+          <ul style="line-height:1.6; margin-bottom: 0;">
+            <li style="margin-bottom:12px;"><b>Category of improvement:</b> Eliminates the manual drudgery of
+              verification, reconciliation, and cross-referencing. The engine compresses weeks of manual
+              ticking and tying into minutes, shifting human effort entirely from data gathering to professional
+              judgment.</li>
+            <li style="margin-bottom:12px;"><b>Whose experience is improved:</b> The entire liability chain.
+              Analysts skip line-by-line manual matching. Managers review surfaced exceptions instead of
+              re-reading raw files. The Signing CA assumes statutory liability backed by pixel-precise
+              lineage, not blind trust.</li>
+            <li><b>How roles correspond:</b> The architecture maps 1:1 across dockets because the chain of liability is
+              mathematically identical. Jhana's Courtroom permission tiers (Paralegal → Clerk → Judge)
+              translate directly into the Audit hierarchy (Analyst → Manager → Signing CA).</li>
+          </ul>
+        </div>
+        <!-- Fact 3 -->
+        <div id="fact-3"
+          style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 24px; border-radius: 8px; scroll-margin-top: 80px;">
+          <h3 style="margin-top:0; color:#fff; display: flex; justify-content: space-between; align-items: center;">3.
+            Type / role / ontology / temporality <span
+              style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5B8DEF; background: rgba(91,141,239,0.1); padding: 4px 8px; border-radius: 4px;">↳
+              Seen in "Systemic advantage" & "Evidence Graph"</span></h3>
+          <ul style="line-height:1.6; margin-bottom: 0;">
+            <li style="margin-bottom:12px;"><b>Type:</b> Ingestion converts chaotic text into strongly-typed primitives
+              (<code>Invoice_Date</code>, <code>Vendor_GSTIN</code>, <code>PAN</code>,
+              <code>TransactionAmount</code>). The engine template-matches standard software layouts
+              deterministically, deploying AI vision only when a messy, unstructured format breaks the rules.
+            </li>
+            <li style="margin-bottom:12px;"><b>Role:</b> Assigns entities dynamic, relational functions based on the
+              accounting context (e.g., distinguishing a standard vendor from a <i>Related Party</i> to filter search
+              queries). Natively, it maps permissions to a true human audit hierarchy (Analyst →
+              Associate → Manager → Signing CA) to preserve the legal chain of liability</li>
+            <li style="margin-bottom:12px;"><b>Ontology:</b> Translates the rigid tax code and Rule 47 framework into an
+              interconnected database schema. Instead of flat keyword searches, it constructs an Evidence
+              Graph that directly anchors financial line items to their exact statutory obligations (e.g., mapping loan
+              schedules to Form 26 Clause 45).</li>
+            <li><b>Temporality:</b> Normalizes messy dates into uniform ISO timestamps to build chronological lifecycles
+              across separate data streams. It computes temporal math to automatically flag statutory cutoff
+              violations, timing mismatches (like the 180-day ITC rule), or post-balance-sheet anomalies.
+            </li>
+          </ul>
+        </div>
+        <!-- Fact 4 -->
+        <div id="fact-4"
+          style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 24px; border-radius: 8px; scroll-margin-top: 80px;">
+          <h3 style="margin-top:0; color:#fff; display: flex; justify-content: space-between; align-items: center;">4.
+            GPAIs vs. jhana.ai <span
+              style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5B8DEF; background: rgba(91,141,239,0.1); padding: 4px 8px; border-radius: 4px;">↳
+              Seen in "Systemic Advantage" & "Execution Model"</span></h3>
+          <p style="line-height:1.6; margin-bottom: 0;">Localized LLMs (and propreitory models like Codex) remain
+            fundamentally prompt-response systems. They retrieve semantically similar text through vector search, reason
+            within a finite context window, generate a single response, and return plain text. jhana.ai replaces each of
+            those assumptions. Instead of similarity search, it traverses a legal ontology that models entities,
+            statutory relationships, and evidentiary links, allowing retrieval based on legal structure rather than
+            lexical proximity. Documents are evaluated as a connected body of evidence through multi-hop timeline
+            construction, enabling contradictions to be detected across files. A reflective agent pipeline decomposes
+            complex work into specialised stages, validates intermediate artifacts against source material, and iterates
+            before producing a final output. Outputs are generated through a native DOCX pipeline, preserving
+            legal formatting, tracked changes, citations, and filing-ready structure rather than unstructured markdown.
+          </p>
+        </div>
+        <!-- Fact 5 -->
+        <div id="fact-5"
+          style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 24px; border-radius: 8px; scroll-margin-top: 80px;">
+          <h3 style="margin-top:0; color:#fff; display: flex; justify-content: space-between; align-items: center;">5.
+            Bespoke to tax & FDE deliverables <span
+              style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5B8DEF; background: rgba(91,141,239,0.1); padding: 4px 8px; border-radius: 4px;">↳
+              Seen in "First Principles" & "Execution Model"</span></h3>
+          <ul style="line-height:1.6; margin-bottom: 0;">
+            <li style="margin-bottom:12px;"><b>Bespoke to Tax:</b> Tax audits are constrained by statutory templates and
+              arithmetic precision. Responses cannot be drafted as conversational text; they must reconcile millions of
+              rows across ledgers, bank statements, GST 2A/2B, and 26AS. Large parts of the deliverable have exactly one
+              correct mathematical output.</li>
+            <li style="margin-bottom:12px;"><b>The Execution Split:</b> Audit solves this by splitting the
+              workload. AI handles judgment and narrative, while a net-new programmatic track (Track 3A)
+              performs all reconciliation deterministically as code. Pushing numeric computation through an LLM is an
+              anti-pattern; our split eliminates hallucination risk where accuracy is non-negotiable.</li>
+            <li><b>What the FDE Builds:</b> The Forward-Deployed Engineer (FDE) doesn't just install a wrapper. They
+              build the dedicated arithmetic layer (Track 3A), map the firm's actual chart of accounts, wire the engine
+              to live GSTN and TRACES feeds, and map the rigid Form 26 clause ontology.</li>
+          </ul>
+        </div>
+        <!-- Fact 6 -->
+        <div id="fact-6"
+          style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 24px; border-radius: 8px; scroll-margin-top: 80px;">
+          <h3 style="margin-top:0; color:#fff; display: flex; justify-content: space-between; align-items: center;">6.
+            GTM advantage with open-weights <span
+              style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #5B8DEF; background: rgba(91,141,239,0.1); padding: 4px 8px; border-radius: 4px;">↳
+              Seen in "Systemic Advantage"</span></h3>
+          <ul style="line-height:1.6; margin-bottom: 0;">
+            <li style="margin-bottom:12px;"><b>Owning the Stack:</b> Frontier API providers sell the reasoning layer,
+              leaving clients to build ingestion, ontology, security, and integration, locked to one model's
+              limits. We own the stack below the model.</li>
+            <li style="margin-bottom:12px;"><b>Swappable Infrastructure:</b> Open-weights makes the model swappable and
+              self-hosted (waterfalling across Mistral/Groq/Gemini/Cerebras) with dead-model failover.</li>
+            <li><b>The Economic & Security Moat:</b> The result is that data never leaves the client's VPC, there is
+              zero dependency on frontier APIs, and token costs are vastly lower. Competitors cannot match
+              this architecture without cutting into their own model margins.</li>
+          </ul>
+        </div>
+        <h2 id="caveats"
+          style="margin-top: 64px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 16px; scroll-margin-top: 50px;">
+          <span class="bdg-warn">!</span> 3. Form 26 Domain Caveats
+        </h2>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px;">
+          <div
+            style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 24px; border-radius: 12px;">
+            <h3 style="margin-top:0; color:#fff;">Form No. 26 Regime Status</h3>
+            <p style="line-height:1.5;"><b>Brand-new & untested:</b> Section 63, Income-tax Act 2025 / Rule 47,
+              Income-tax
+              Rules 2026, first applicable FY starting 1 Apr 2026. No filed precedent, no case law, no market-standard
+              interpretation yet.<br><br>Entire vertical is a bet on a regime still being settled — not "indexing an
+              established form" like 3CA/3CB/3CD.</p>
+          </div>
+
+          <div
+            style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 24px; border-radius: 12px;">
+            <h3 style="margin-top:0; color:#fff;">Part-Lettering Conflict</h3>
+            <p style="line-height:1.5;"><b>FAQ vs Form Template:</b> FAQ 8 assigns lettering (A=assessee, B=Statement of
+              Particulars). The form's own printed headers run the reverse.<br><br><b>Resolution:</b> The pitch follows
+              the form's own printed header (Part D = Statement of Particulars). Whichever lettering the e-filing schema
+              enforces at implementation is what will actually matter.</p>
+          </div>
+
+          <div
+            style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 24px; border-radius: 12px; grid-column: 1 / -1;">
+            <h3 style="margin-top:0; color:#fff;">Deliberate Slide Omissions</h3>
+            <p style="line-height:1.5;"><b>Cut for brevity:</b> Procedural Notes 7, 9, 10 (boilerplate).<br><b>Cut full
+                downstream schedules:</b> Only mapped clauses carrying real audit weight (36/37 depreciation, 45(a)-(d)
+              loans, 50-51 TDS/TCS, 52 GST) for the visual demo. A real build needs the full clause set running past
+              Part
+              D.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const archModal = document.getElementById("arch-modal");
+        const archModalBtn = document.getElementById("arch-modal-btn");
+        const archCloseBtn = document.querySelector(".arch-close");
+
+        if (archModalBtn && archModal) {
+          archModalBtn.addEventListener("click", function () {
+            archModal.classList.add("show");
+          });
+          archCloseBtn.addEventListener("click", function () {
+            archModal.classList.remove("show");
+          });
+          window.addEventListener("click", function (event) {
+            if (event.target == archModal) {
+              archModal.classList.remove("show");
+            }
+          });
+        }
+      });
+    </script>
 
 </body>
 
