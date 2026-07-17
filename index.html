@@ -629,6 +629,12 @@
       if (e.key === 'ArrowLeft') goTo(current - 1);
     });
 
+    window.addEventListener('message', (e) => {
+      if (e.data === 'goToSlide:2') {
+        goTo(2);
+      }
+    });
+
     goTo(0);
 
     const jhanaBrand = document.querySelector('.brand');

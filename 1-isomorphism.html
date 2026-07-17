@@ -396,6 +396,16 @@
         width: 84px;
       }
     }
+
+    .form26-link {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .form26-link:hover {
+      color: #3FAE7A !important;
+    }
   </style>
 </head>
 
@@ -421,7 +431,6 @@
           <div class="act-title"><span class="act-kicker">Act One</span><span class="act-label" id="a1label"></span>
           </div>
         </div>
-        <div class="act-arrow">→</div>
         <div class="fade" id="a1body"></div>
       </div>
       <div class="act">
@@ -430,7 +439,6 @@
           <div class="act-title"><span class="act-kicker">Act Two</span><span class="act-label" id="a2label"></span>
           </div>
         </div>
-        <div class="act-arrow">→</div>
         <div class="fade" id="a2chips"></div>
         <div class="fade" id="a2body"></div>
       </div>
@@ -578,7 +586,7 @@
         a3mods: [
           ['Evidence Graph', 'Every number traceable back to its source document, page, and the extraction that derived it.'],
           ['Going Concern', 'A sequential final read across the whole reviewed graph, feeding the quantified qualification-impact table.'],
-          ['Form No. 26', 'Part D fully populated, clause-mapped, and ready to be signed.']
+          ['<a href="#" onclick="event.preventDefault(); window.parent.postMessage(\'goToSlide:2\', \'*\');" class="form26-link">Form No. 26</a>', '<a href="#" onclick="event.preventDefault(); window.parent.postMessage(\'goToSlide:2\', \'*\');" class="form26-link">Part D fully populated, clause-mapped, and ready to be signed.</a>']
         ],
         signWho: 'the Chartered Accountant (CA)',
         stats: ['Suit already live for CAs & auditors', '"picked the right §149 clause" — CNGSN & Associates LLP', 'On-site FDE support']
