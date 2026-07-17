@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Jhana Icon — Animated</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0d0d0d;
+    }
+
+    .wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    svg {
+      width: 320px;
+      height: auto;
+      overflow: visible;
+    }
+
+    /* Single line, traced along the real centerline of the icon shape */
+    .line {
+      fill: none;
+      stroke: #4CAF7D;
+      stroke-width: 35;
+      stroke-linecap: round;
+      opacity: 0; /* Prevent FOUC before JS runs */
+    }
+
+    .fill-path {
+      fill: #4CAF7D;
+      opacity: 0;
+    }
+
+    .dot-path {
+      fill: #4CAF7D;
+      opacity: 0;
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+
+    button {
+      font-family: system-ui, sans-serif;
+      font-size: 14px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid #4CAF7D;
+      background: transparent;
+      color: #4CAF7D;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <svg id="icon" viewBox="0 0 552 548">
+      <!-- This is the real centerline of the icon, extracted by
+         skeletonizing the actual shape — not a guessed curve. -->
+      <path id="line" class="line"
+        d="M 265.5 242.0 C 265.6 245.8 265.9 256.2 266.0 264.5 C 266.1 272.8 266.0 282.5 266.0 291.5 C 266.0 300.5 266.0 309.5 266.0 318.5 C 266.0 327.5 266.1 336.5 266.0 345.5 C 265.9 354.5 266.0 363.5 265.5 372.5 C 265.0 381.5 264.8 390.5 263.0 399.5 C 261.2 408.5 260.3 418.2 255.0 426.5 C 249.7 434.8 239.5 444.3 231.0 449.5 C 222.5 454.7 213.0 456.5 204.0 457.5 C 195.0 458.5 186.0 457.4 177.0 455.5 C 168.0 453.6 159.0 450.2 150.0 446.0 C 141.0 441.8 132.0 436.4 123.0 430.0 C 114.0 423.6 104.3 415.8 96.0 407.5 C 87.7 399.2 79.5 389.5 73.0 380.5 C 66.5 371.5 61.6 362.5 57.0 353.5 C 52.4 344.5 48.7 335.5 45.5 326.5 C 42.3 317.5 39.8 308.5 38.0 299.5 C 36.2 290.5 35.2 281.5 34.5 272.5 C 33.8 263.5 33.7 254.5 34.0 245.5 C 34.3 236.5 35.1 227.5 36.5 218.5 C 37.9 209.5 39.8 200.5 42.5 191.5 C 45.2 182.5 48.5 173.5 52.5 164.5 C 56.5 155.5 60.8 146.5 66.5 137.5 C 72.2 128.5 78.8 119.3 86.5 110.5 C 94.2 101.7 103.7 92.1 112.5 84.5 C 121.3 76.9 130.5 70.6 139.5 65.0 C 148.5 59.4 157.5 55.1 166.5 51.0 C 175.5 46.9 184.5 43.3 193.5 40.5 C 202.5 37.7 211.5 35.6 220.5 34.0 C 229.5 32.4 238.5 31.5 247.5 31.0 C 256.5 30.5 265.5 30.5 274.5 31.0 C 283.5 31.5 292.5 32.4 301.5 34.0 C 310.5 35.6 319.5 37.8 328.5 40.5 C 337.5 43.2 346.5 46.5 355.5 50.5 C 364.5 54.5 373.5 59.0 382.5 64.5 C 391.5 70.0 400.6 76.1 409.5 83.5 C 418.4 90.9 428.1 100.2 436.0 109.0 C 443.9 117.8 450.8 127.0 457.0 136.0 C 463.2 145.0 468.5 154.0 473.0 163.0 C 477.5 172.0 480.8 181.0 484.0 190.0 C 487.2 199.0 489.9 208.0 492.0 217.0 C 494.1 226.0 495.5 235.0 496.5 244.0 C 497.5 253.0 498.0 262.0 498.0 271.0 C 498.0 280.0 497.3 289.0 496.5 298.0 C 495.7 307.0 494.8 316.0 493.0 325.0 C 491.2 334.0 488.5 343.0 485.5 352.0 C 482.5 361.0 479.2 370.0 475.0 379.0 C 470.8 388.0 466.2 397.0 460.5 406.0 C 454.8 415.0 448.5 424.1 441.0 433.0 C 433.5 441.9 424.2 451.6 415.5 459.5 C 406.8 467.4 397.5 474.2 388.5 480.5 C 379.5 486.8 370.5 492.2 361.5 497.0 C 352.5 501.8 343.5 505.6 334.5 509.0 C 325.5 512.4 316.5 515.2 307.5 517.5 C 298.5 519.8 289.5 521.7 280.5 523.0 C 271.5 524.3 262.5 525.2 253.5 525.5 C 244.5 525.8 235.5 525.6 226.5 525.0 C 217.5 524.4 208.5 523.5 199.5 522.0 C 190.5 520.5 181.5 518.5 172.5 516.0 C 163.5 513.5 154.5 510.4 145.5 507.0 C 136.5 503.6 123.0 497.4 118.5 495.5" />
+
+      <g transform="translate(0,548) scale(0.1,-0.1)">
+        <path id="fill-path" class="fill-path" d="M2402 5339 c-136 -10 -276 -35 -448 -78 -95 -24 -288 -97 -409 -155
+        -607 -292 -1053 -793 -1264 -1423 -136 -406 -159 -896 -60 -1293 170 -682 601
+        -1233 1191 -1524 396 -195 703 -207 989 -40 217 128 343 298 394 534 38 177
+        40 229 40 995 l-1 750 -22 45 c-54 112 -200 134 -283 44 -51 -56 -51 -63 -39
+        -606 19 -793 0 -1114 -76 -1273 -34 -74 -126 -156 -234 -208 -85 -42 -85 -42
+        -200 -42 -141 0 -203 16 -385 100 -493 228 -883 714 -1029 1282 -54 209 -72
+        527 -42 745 93 671 498 1247 1097 1561 333 175 691 258 1054 244 344 -13 584
+        -73 890 -222 600 -292 1025 -829 1194 -1505 12 -49 26 -134 42 -250 13 -92 6
+        -555 -10 -625 -6 -27 -18 -86 -27 -130 -35 -175 -103 -368 -195 -555 -116
+        -235 -257 -430 -448 -620 -505 -503 -1231 -761 -1931 -685 -325 35 -554 100
+        -840 237 -58 28 -123 53 -145 55 -57 6 -114 -17 -150 -61 -27 -34 -30 -45 -30
+        -109 0 -106 17 -125 179 -203 710 -341 1517 -373 2236 -89 869 344 1502 1101
+        1676 2006 64 338 57 839 -16 1094 -4 17 -11 46 -15 65 -23 116 -115 360 -202
+        534 -127 254 -274 458 -483 666 -330 330 -689 538 -1160 670 -229 65 -551 91
+        -838 69z" />
+        <path id="dot-path" class="dot-path" d="M2548 4431 c-70 -15 -163 -69 -217 -126 -73 -78 -113 -167 -119 -268
+        -8 -141 29 -244 123 -339 170 -172 446 -171 615 2 149 151 168 370 49 549 -44
+        66 -131 135 -209 165 -51 19 -186 29 -242 17z" />
+      </g>
+    </svg>
+    <button id="replay">Replay</button>
+  </div>
+
+  <script>
+    const line = document.getElementById('line');
+    const fillPath = document.getElementById('fill-path');
+    const dotPath = document.getElementById('dot-path');
+    const replayBtn = document.getElementById('replay');
+
+    function run() {
+      const len = line.getTotalLength();
+      line.style.transition = 'none';
+      line.style.strokeDasharray = len;
+      line.style.strokeDashoffset = len;
+      line.style.opacity = 1;
+      fillPath.style.transition = 'none';
+      fillPath.style.opacity = 0;
+      dotPath.style.transition = 'none';
+      dotPath.style.opacity = 0;
+      dotPath.style.transform = 'scale(0.4)';
+
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        line.style.transition = 'stroke-dashoffset 1.6s ease-in-out';
+        line.style.strokeDashoffset = '0';
+
+        setTimeout(() => {
+          fillPath.style.transition = 'opacity .2s linear';
+          fillPath.style.opacity = 1;
+        }, 1600); // Start fading in exactly when stroke ends
+
+        setTimeout(() => {
+          line.style.transition = 'opacity .2s linear';
+          line.style.opacity = 0;
+        }, 1800); // Fade out stroke only after fill is fully opaque
+
+        setTimeout(() => {
+          dotPath.style.transition = 'opacity .3s ease, transform .3s cubic-bezier(.34,1.56,.64,1)';
+          dotPath.style.opacity = 1;
+          dotPath.style.transform = 'scale(1)';
+        }, 1900);
+      }));
+    }
+
+    run();
+    replayBtn.addEventListener('click', run);
+  </script>
+</body>
+
+</html>

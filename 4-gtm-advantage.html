@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jhana.ai — Deterministic Systems Moat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg-0: #090A14;
+      --ink: #F0F1F6;
+      --ink-dim: rgba(240, 241, 246, 0.65);
+      --ink-faint: rgba(160, 166, 184, 0.45);
+      --line: rgba(255, 255, 255, 0.08);
+      --line-soft: rgba(255, 255, 255, 0.04);
+      --accent: #B4B8C5;
+      --accent-bg: rgba(180, 184, 197, 0.1);
+      --accent-border: rgba(180, 184, 197, 0.25);
+      --green: #3FAE7A;
+      --green-bg: rgba(63, 174, 122, 0.1);
+      --green-border: rgba(63, 174, 122, 0.25);
+      --gold: #C99A3D;
+      --gold-bg: rgba(201, 154, 61, 0.1);
+      --gold-border: rgba(201, 154, 61, 0.25);
+      --red: #C0392B;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "IBM Plex Serif", Georgia, serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1000px 700px at 80% -5%, rgba(180, 184, 197, 0.06), transparent 60%),
+        radial-gradient(900px 600px at 10% 105%, rgba(63, 174, 122, 0.04), transparent 60%),
+        linear-gradient(175deg, #12101F 0%, #0c0a14 40%, var(--bg-0) 80%);
+      min-height: 100vh;
+      padding: 70px 4vw 120px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .page {
+      max-width: 1080px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .eyebrow {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+      margin: 0 0 16px;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .sub {
+      text-align: center;
+      font-size: 15px;
+      font-style: italic;
+      color: var(--ink-faint);
+      max-width: 720px;
+      margin: 0 auto 70px;
+      line-height: 1.6;
+    }
+
+    .section-head {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .section-kicker {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--ink);
+      margin: 0;
+      line-height: 1.2;
+    }
+
+
+    /* VS SECTION (Bounded Substrate vs Wrapper) */
+    .vs-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 90px;
+    }
+
+    .vs-card {
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .vs-card.winner {
+      border-color: var(--accent-border);
+      background: linear-gradient(180deg, rgba(180, 184, 197, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(180, 184, 197, 0.1);
+    }
+
+    .vs-badge {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      border-radius: 999px;
+      display: inline-block;
+      align-self: flex-start;
+      margin-bottom: 30px;
+    }
+
+    .vs-card.loser .vs-badge {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--ink-faint);
+      border: 1px solid var(--line);
+    }
+
+    .vs-card.winner .vs-badge {
+      background: var(--accent-bg);
+      color: var(--accent);
+      border: 1px solid var(--accent-border);
+    }
+
+    .vs-stage {
+      flex: 1;
+      min-height: 200px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .vs-desc {
+      font-size: 13.5px;
+      color: var(--ink-dim);
+      line-height: 1.6;
+      padding-top: 24px;
+      border-top: 1px solid var(--line-soft);
+    }
+
+    .vs-desc b {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    /* Awesome Animated Pipeline Visual */
+    .w-pipe {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .w-node {
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink);
+      position: relative;
+      z-index: 2;
+    }
+
+    .w-node.gen {
+      border-color: rgba(180, 184, 197, 0.4);
+      box-shadow: 0 0 20px rgba(180, 184, 197, 0.15);
+    }
+
+    .w-node.kernel {
+      border-color: var(--green);
+      background: rgba(63, 174, 122, 0.08);
+      color: var(--green);
+      box-shadow: 0 0 20px rgba(63, 174, 122, 0.2);
+    }
+
+    .w-node.out {
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      box-shadow: 0 0 25px rgba(180, 184, 197, 0.3);
+      border: none;
+    }
+
+    .w-conn {
+      width: 24px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+      border-radius: 1px;
+    }
+
+    .w-conn-glow {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      animation: scan 1.5s infinite linear;
+    }
+
+    @keyframes scan {
+      0% {
+        transform: translateX(-100%);
+      }
+
+      100% {
+        transform: translateX(100%);
+      }
+    }
+
+    /* 3 GTM CARDS SECTION */
+    .gtm-wrap {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 90px;
+    }
+
+    .gtm-card {
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .gtm-card:hover {
+      border-color: var(--accent-border);
+      transform: translateY(-4px);
+      background: linear-gradient(180deg, rgba(180, 184, 197, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(180, 184, 197, 0.05);
+    }
+
+    .gtm-visual {
+      height: 140px;
+      margin-bottom: 24px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gtm-card h3 {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--ink);
+      margin: 0 0 12px;
+      line-height: 1.4;
+    }
+
+    .gtm-card p {
+      font-size: 13px;
+      color: var(--ink-dim);
+      margin: 0 0 16px;
+      line-height: 1.5;
+    }
+
+    .gtm-card ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .gtm-card ul li {
+      font-size: 12px;
+      color: var(--ink-dim);
+      line-height: 1.5;
+      padding-top: 12px;
+      border-top: 1px dashed var(--line-soft);
+    }
+
+    .gtm-card ul li b {
+      color: var(--ink);
+      font-weight: 600;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* Visuals for GTM Cards */
+    /* 1. Sovereignty (Server Stack) */
+    .v-sov-env {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .v-sov-servers {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .v-sov-server {
+      width: 80px;
+      height: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--accent-border);
+      border-radius: 4px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding-left: 8px;
+      box-shadow: inset 0 0 10px var(--accent-bg);
+    }
+
+    .v-sov-server::before {
+      content: '';
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      animation: blink 2s infinite;
+    }
+
+    .v-sov-server:nth-child(2)::before {
+      animation-delay: 0.3s;
+    }
+
+    .v-sov-server:nth-child(3)::before {
+      animation-delay: 0.6s;
+    }
+
+    .v-sov-lock {
+      position: absolute;
+      top: -15px;
+      right: -15px;
+      width: 24px;
+      height: 24px;
+      background: var(--bg-0);
+      border-radius: 50%;
+      border: 1px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 15px var(--accent-bg);
+    }
+
+    .v-sov-lock svg {
+      width: 12px;
+      height: 12px;
+      stroke: var(--accent);
+    }
+
+    .v-sov-ring {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border: 1px dashed rgba(180, 184, 197, 0.4);
+      border-radius: 50%;
+      animation: spin 15s linear infinite;
+      z-index: 1;
+    }
+
+    @keyframes spin {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 0.3;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    /* 2. Economics (Graph) */
+    .v-econ-graph {
+      width: 80%;
+      height: 60%;
+      position: relative;
+      border-left: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .v-econ-line-bad {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .v-econ-line-bad svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .v-econ-line-good {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--green);
+      box-shadow: 0 0 10px var(--green-bg);
+    }
+
+    .v-econ-label {
+      position: absolute;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 8px;
+    }
+
+    /* 3. Customization (Citation Trace) */
+    .v-cust-env {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .v-cust-doc {
+      position: absolute;
+      left: 15%;
+      top: 30%;
+      width: 50px;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .v-cust-dl {
+      height: 2px;
+      background: var(--line);
+      border-radius: 1px;
+      width: 100%;
+    }
+
+    .v-cust-dl.hl {
+      background: var(--gold);
+      box-shadow: 0 0 6px var(--gold);
+      width: 80%;
+    }
+
+    .v-cust-node {
+      position: absolute;
+      right: 15%;
+      top: 40%;
+      width: 60px;
+      height: 24px;
+      background: var(--gold-bg);
+      border: 1px solid var(--gold-border);
+      border-radius: 4px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 7px;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px var(--gold-bg);
+    }
+
+    .v-cust-path {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      pointer-events: none;
+    }
+
+
+    /* DEEP DIVE TOGGLES (Formal Verification & State Graph) */
+    .dim-section {
+      border-top: 1px solid var(--line);
+      padding-top: 60px;
+    }
+
+    .dim-toggles {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+
+    .dim-toggles button {
+      all: unset;
+      cursor: pointer;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 10px 24px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      color: var(--ink-faint);
+      transition: all 0.3s ease;
+    }
+
+    .dim-toggles button.active {
+      color: var(--accent);
+      background: var(--accent-bg);
+      border-color: var(--accent-border);
+    }
+
+    .dim-toggles button:hover:not(.active) {
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .dim-stage {
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 0;
+      min-height: 380px;
+      display: flex;
+      align-items: stretch;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .dim-panel {
+      display: none;
+      width: 100%;
+      animation: fadeUp 0.4s ease forwards;
+    }
+
+    .dim-panel.active {
+      display: flex;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dim-content {
+      flex: 1.1;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-right: 1px solid var(--line);
+    }
+
+    .dim-visual {
+      flex: 0.9;
+      background: rgba(0, 0, 0, 0.2);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .dim-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+
+    .dim-desc {
+      font-size: 14px;
+      color: var(--ink-dim);
+      line-height: 1.6;
+    }
+
+    .dim-desc b {
+      color: var(--ink);
+    }
+
+    /* Visuals for Toggles */
+    .v-ont-graph {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .v-ont-node {
+      position: absolute;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 9px;
+      font-weight: 600;
+      border: 1px solid var(--line);
+      background: var(--bg-0);
+      transform: translate(-50%, -50%);
+      transition: 0.3s ease;
+    }
+
+    .v-type-doc {
+      width: 120px;
+      height: 160px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: absolute;
+      left: 15%;
+    }
+
+    .v-type-line {
+      height: 4px;
+      background: var(--line);
+      border-radius: 2px;
+    }
+
+    .v-type-schema {
+      width: 220px;
+      background: var(--accent-bg);
+      border: 1px solid var(--accent-border);
+      border-radius: 8px;
+      padding: 16px;
+      position: absolute;
+      right: 10%;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      color: var(--accent);
+      box-shadow: 0 10px 30px rgba(180, 184, 197, 0.1);
+    }
+
+    /* Role Track (Interactive Pipeline mapped to Liability) */
+    .r-track-wrap {
+      width: 100%;
+      padding: 0 20px;
+    }
+
+    .r-track {
+      display: flex;
+      width: 100%;
+      height: 220px;
+      gap: 10px;
+      position: relative;
+      justify-content: center;
+      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    /* Dynamic tracking: Automatically pan the camera to perfectly center the hovered capsule */
+    .r-track:has(.r-step:nth-child(1):hover) {
+      transform: translateX(82.5px);
+    }
+
+    .r-track:has(.r-step:nth-child(2):hover) {
+      transform: translateX(27.5px);
+    }
+
+    .r-track:has(.r-step:nth-child(3):hover) {
+      transform: translateX(-27.5px);
+    }
+
+    .r-track:has(.r-step:nth-child(4):hover) {
+      transform: translateX(-82.5px);
+    }
+
+    .r-step {
+      flex: 0 0 45px;
+      /* Sleeker vertical tabs to save horizontal space */
+      min-width: 0;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      position: relative;
+      transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    /* Individual step hover state */
+    .r-track .r-step:hover {
+      flex: 0 0 320px;
+      /* Fixed expanded width guarantees it NEVER squashes text */
+      background: var(--accent-bg);
+      border-color: var(--accent-border);
+      box-shadow: 0 10px 30px rgba(180, 184, 197, 0.15);
+    }
+
+    /* Vertical text */
+    .r-vertical {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-90deg);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ink-faint);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .r-track .r-step:hover .r-vertical {
+      opacity: 0;
+    }
+
+    /* Default View - Hidden since we now default to vertical tabs */
+    .r-step-default {
+      display: none;
+    }
+
+    /* Expanded View */
+    .r-step-expanded {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+      padding: 10px;
+      gap: 10px;
+    }
+
+    .r-track .r-step:hover .r-step-expanded,
+    .r-track .r-step.expanded .r-step-expanded {
+      opacity: 1;
+      pointer-events: auto;
+      transition-delay: 0.1s;
+    }
+
+    .r-exp-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex: 1;
+      min-width: 0;
+      gap: 8px;
+    }
+
+    .r-exp-divider {
+      width: 1px;
+      height: 70%;
+      background: var(--accent-border);
+      flex-shrink: 0;
+    }
+
+    .r-exp-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: left;
+      font-size: 11px;
+      color: var(--ink-dim);
+      line-height: 1.5;
+      flex: 1.5;
+      min-width: 0;
+    }
+
+    .r-exp-right ul {
+      margin: 0 0 8px 16px;
+      padding: 0;
+      color: var(--ink);
+    }
+
+    .r-exp-right li {
+      margin-bottom: 4px;
+    }
+
+    .r-role {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .r-calls {
+      font-size: 10px;
+      color: var(--ink-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .r-art {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gold);
+      background: var(--gold-bg);
+      padding: 6px 12px;
+      border-radius: 4px;
+      border: 1px solid var(--gold-border);
+      text-align: center;
+      white-space: normal;
+      /* Allow wrapping if needed instead of bleeding over edges */
+      line-height: 1.2;
+    }
+
+    .v-temp-track {
+      width: 70%;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .v-temp-label {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 9px;
+      color: var(--ink-faint);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .v-temp-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .v-temp-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: var(--green);
+      animation: fill1 4s infinite;
+    }
+
+    @media (max-width: 900px) {
+      .vs-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .gtm-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .dim-stage {
+        flex-direction: column;
+      }
+
+      .dim-content {
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .dim-visual {
+        min-height: 250px;
+      }
+
+      .r-track {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="eyebrow">The Competitive Moat</div>
+    <h1>From "Reading Documents" to<br><em>Deterministic Systems</em></h1>
+    <p class="sub">By combining open weights with a disciplined systems architecture, jhana.ai moves beyond the fragile
+      guessing games of standard Retrieval-Augmented Generation (RAG). Open weights serve strictly as cheap candidate
+      generators, while our proprietary architecture acts as the absolute verifier.</p>
+
+    <!-- THE BOUNDED SUBSTRATE (Winner vs Loser Cards) -->
+    <div class="vs-wrap">
+      <!-- Loser Card -->
+      <div class="vs-card loser">
+        <div class="vs-badge">Closed-API Competitors</div>
+        <div class="vs-stage">
+          <div class="w-pipe">
+            <div class="w-node">Raw Files</div>
+            <div class="w-conn"></div>
+            <div class="w-node" style="border-style: dashed; opacity: 0.6; padding: 20px;">Black Box LLM</div>
+            <div class="w-conn"></div>
+            <div class="w-node" style="color: var(--red); border-color: var(--red);">Chat Guesswork</div>
+          </div>
+        </div>
+        <div class="vs-desc">
+          Requires passing raw client data into a black box, hoping the inference is legally accurate.<br><br>
+          <b>The Result:</b> Probabilistic guesswork. Leakage risk via external inference calls to foreign servers, and
+          requires slow human-in-the-loop line review to check AI slop.
+        </div>
+      </div>
+
+      <!-- Winner Card -->
+      <div class="vs-card winner">
+        <div class="vs-badge">The Suit Engine (jhana.ai)</div>
+        <div class="vs-stage">
+          <div class="w-pipe">
+            <div class="w-node gen">1. Files</div>
+            <div class="w-conn">
+              <div class="w-conn-glow"></div>
+            </div>
+            <div class="w-node gen">2. Open Weights</div>
+            <div class="w-conn">
+              <div class="w-conn-glow" style="animation-delay: 0.3s;"></div>
+            </div>
+            <div class="w-node kernel">3. Kernel Checker</div>
+            <div class="w-conn">
+              <div class="w-conn-glow" style="animation-delay: 0.6s;"></div>
+            </div>
+            <div class="w-node out">Verified Output</div>
+          </div>
+        </div>
+        <div class="vs-desc">
+          Open weights generate the candidate; a bijective embedding maps the raw files into a deterministic state
+          graph, and a symbolic kernel checks the candidate against that graph before acceptance — outputs that don't
+          satisfy the schema are rejected outright, not corrected or guessed at.<br><br>
+          <b>The Result:</b> Deterministic validation with pinpoint citations. Zero data-touch local execution, strictly
+          forbidding the extraction engine from fabricating facts.
+        </div>
+      </div>
+    </div>
+
+    <!-- BENCHMARK PROOF -->
+    <div
+      style="text-align:center; margin: 0 0 90px; padding: 24px 20px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,0.015);">
+      <div class="section-kicker" style="margin-bottom: 10px;">Not a claim — a benchmark</div>
+      <div style="font-size: 14px; color: var(--ink-dim); line-height: 1.7; max-width: 720px; margin: 0 auto;">
+        In jhana.ai's blinded Headnotes Arena benchmark (38 NLS-trained legal evaluators, 12 Supreme Court judgments),
+        jhana.aiheadnotes beat GPT-4o with a <b style="color:var(--ink);">73.1% win probability (p &lt; 0.001)</b> and
+        beat SCC — India's 50-year human gold standard — at <b style="color:var(--ink);">58.2%</b>, with no
+        statistically significant gap in accuracy. That's the verification layer already proven on judgments; the
+        same substrate is what we're proposing to extend to Form No. 26.
+      </div>
+    </div>
+
+    <!-- GTM CARDS SECTION -->
+    <div class="section-head">
+      <div class="section-kicker">The Market Advantage</div>
+      <h2 class="section-title">Deterministic Proof, Self-Hosted.</h2>
+    </div>
+
+    <div class="gtm-wrap">
+      <!-- Card 1: Sovereignty -->
+      <div class="gtm-card">
+        <div class="gtm-visual">
+          <div class="v-sov-env">
+            <div class="v-sov-ring"></div>
+            <div class="v-sov-servers">
+              <div class="v-sov-server"></div>
+              <div class="v-sov-server"></div>
+              <div class="v-sov-server"></div>
+              <div class="v-sov-lock">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h3>1. Absolute Data Sovereignty</h3>
+        <p>The industry handles highly sensitive, privileged corporate filings, ledgers, and case documents.</p>
+        <ul>
+          <li><b>Eliminates Third-Party Risk</b>Passing sensitive case records through external APIs introduces
+            unacceptable compliance and liability risks.</li>
+          <li><b>VPC & On-Premise GTM</b>Open weights allow fully-managed private cloud deployments. 100% control over
+            data access and retention for Tier-1 firms.</li>
+        </ul>
+      </div>
+
+      <!-- Card 2: Economics -->
+      <div class="gtm-card">
+        <div class="gtm-visual">
+          <div class="v-econ-graph">
+            <div class="v-econ-line-bad">
+              <svg>
+                <path d="M 0 80 Q 50 80 150 0" stroke="rgba(192, 57, 43, 0.6)" stroke-width="2" fill="none"
+                  stroke-dasharray="4 4" />
+              </svg>
+            </div>
+            <div class="v-econ-line-good"></div>
+            <div class="v-econ-label" style="top: -5px; right: 0; color: rgba(192, 57, 43, 0.8);">Variable API Billing
+            </div>
+            <div class="v-econ-label" style="bottom: 25px; right: 0; color: var(--green);">Flat Local Infra</div>
+          </div>
+        </div>
+        <h3>2. Radical Unit Economics</h3>
+        <p>Verification requires processing thousands of pages of text, scanned documents, and historical archives.</p>
+        <ul>
+          <li><b>Slashes Long-Context Costs</b>Building knowledge graphs and chronologies over millions of tokens via
+            closed-source APIs is prohibitively expensive.</li>
+          <li><b>Cost-Efficient Local Infra</b>Semantic search scales at a flat infrastructure rate rather than scaling
+            linearly with variable API billing.</li>
+        </ul>
+      </div>
+
+      <!-- Card 3: Customization -->
+      <div class="gtm-card">
+        <div class="gtm-visual">
+          <div class="v-cust-env">
+            <div class="v-cust-doc">
+              <div class="v-cust-dl"></div>
+              <div class="v-cust-dl hl"></div>
+              <div class="v-cust-dl"></div>
+              <div class="v-cust-dl"></div>
+            </div>
+            <svg class="v-cust-path">
+              <path d="M 70 65 Q 120 40 180 65" stroke="var(--gold)" stroke-width="1" fill="none"
+                stroke-dasharray="4 4" />
+            </svg>
+            <div class="v-cust-node">Sec 188</div>
+          </div>
+        </div>
+        <h3>3. Precision Customization</h3>
+        <p>Generic foundational models struggle with the nuances, vocabulary, and strict formatting of statutory
+          structures.</p>
+        <ul>
+          <li><b>Domain-Specific Fine-Tuning</b>Open weights allow fine-tuning specifically on regional statutory
+            provisions, local judgments, and filing formats.</li>
+          <li><b>Controlling Hallucinations</b>Self-hosting natively bakes specialized ontologies into token selection
+            to systematically prevent hallucinations.</li>
+        </ul>
+      </div>
+    </div>
+
+
+    <!-- DEEP DIVE: STATE GRAPH -->
+    <div class="dim-section">
+      <div class="section-head">
+        <div class="section-kicker">Formal Verification</div>
+        <h2 class="section-title">Mapping the Legal State Graph</h2>
+        <p style="font-size: 14px; color: var(--ink-dim); margin-top: 10px; max-width: 680px; margin-inline: auto;">
+          Complex litigation involves multi-decade histories. Standard LLMs flatten these networks into low-resolution
+          summaries. We map them along a deterministic axis.</p>
+      </div>
+
+      <div class="dim-toggles" id="dimToggles">
+        <button class="active" data-dim="type">Type Theory (Lean)</button>
+        <button data-dim="ontology">Ontology</button>
+        <button data-dim="role">Role</button>
+        <button data-dim="temporality">Temporality</button>
+      </div>
+
+      <div class="dim-stage">
+
+        <!-- TYPE PANEL -->
+        <div class="dim-panel active" id="p-type">
+          <div class="dim-content">
+            <div class="dim-title">Type: Lean & Type Theory</div>
+            <div class="dim-desc">
+              Standard RAG systems treat law as natural language text, offering zero guarantees of truth. jhana.ai
+              handles legal text like a code compiler handles software.<br><br>
+              <b>The "Lean" Moat:</b> Borrowing mathematical formalization paradigms from the Lean proof assistant, we
+              constrain open-weight models. The model generates a candidate proof, which is passed through a local,
+              symbolic Kernel Type-Checker. If an LLM introduces an emergent logic contradiction, the underlying
+              type-system rejects the state transition outright.
+            </div>
+          </div>
+          <div class="dim-visual">
+            <div class="v-type-doc" style="left: 10%;">
+              <div class="v-type-line"></div>
+              <div class="v-type-line short" style="background:var(--accent);"></div>
+              <div class="v-type-line"></div>
+            </div>
+            <div
+              style="position: absolute; font-family: monospace; color: var(--ink-faint); font-size: 16px; left: 35%;">➔
+            </div>
+            <div class="v-type-schema">
+              // Kernel Type-Checker<br><br>
+              <b>Constraint:</b> Exclusivity<br>
+              <b>Input:</b> Vendor_Agreement_v2<br>
+              <span style="color:var(--red);"><b>Error:</b> Logic contradiction detected at Line 42.</span><br>
+              <b>State Transition:</b> REJECTED
+            </div>
+          </div>
+        </div>
+
+        <!-- ONTOLOGY PANEL -->
+        <div class="dim-panel" id="p-ontology">
+          <div class="dim-content">
+            <div class="dim-title">Ontology: The Computational Object</div>
+            <div class="dim-desc">
+              Rather than parsing data on the fly during a user prompt, jhana.ai's Suit maps out a permanent digital
+              twin of the legal matter at ingestion.<br><br>
+              It translates chaotic documents into hard computational objects (e.g., specific statutory provisions,
+              filings, ledgers). It builds the <b>State Graph</b>—mapping the exact relationships and constraints
+              governing how these objects connect.
+            </div>
+          </div>
+          <div class="dim-visual">
+            <div class="v-ont-graph">
+              <svg width="100%" height="100%" style="position:absolute; top:0; left:0;">
+                <path d="M 120 120 L 220 180 L 320 120" stroke="rgba(180, 184, 197, 0.4)" stroke-width="2"
+                  fill="none" />
+                <path d="M 220 180 L 220 280" stroke="rgba(180, 184, 197, 0.4)" stroke-width="2" fill="none" />
+              </svg>
+              <div class="v-ont-node" style="left: 120px; top: 120px;">Filing</div>
+              <div class="v-ont-node" style="left: 320px; top: 120px;">Statute</div>
+              <div class="v-ont-node"
+                style="left: 220px; top: 180px; border-color: var(--accent); color: var(--accent);">State Graph Node
+              </div>
+              <div class="v-ont-node"
+                style="left: 220px; top: 280px; background: var(--accent-bg); border-color: var(--accent-border);">
+                Computational Object</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROLE PANEL (RESTORED INTERACTIVE TIMELINE FROM MARKDOWN) -->
+        <div class="dim-panel" id="p-role">
+          <div class="dim-content">
+            <div class="dim-title">Role: Relational Mapping (The Hierarchy of Human Liability)</div>
+            <div class="dim-desc">
+              This layer tracks how functional roles and domain responsibilities shift across the multi-agent execution
+              pipeline. It explicitly segregates automated agent tasks from professional human verification, mapping the
+              human chain of custody directly to the underlying graph structure.
+            </div>
+          </div>
+          <div class="dim-visual" style="padding: 20px;">
+            <div class="r-track-wrap">
+              <div class="r-track">
+                <!-- Analyst -->
+                <div class="r-step">
+                  <div class="r-vertical">Analyst</div>
+                  <div class="r-step-default">
+                    <div class="r-role">Analyst</div>
+                    <div class="r-calls">Stages 1 & 2</div>
+                    <div class="r-art">Typed Schema</div>
+                  </div>
+                  <div class="r-step-expanded">
+                    <div class="r-exp-left">
+                      <div class="r-role" style="font-size: 15px;">Analyst</div>
+                      <div class="r-calls">Calls 1 & 2 ── [Concurrent]</div>
+                      <div class="r-art">Typed Schema</div>
+                    </div>
+                    <div class="r-exp-divider"></div>
+                    <div class="r-exp-right">
+                      <ul>
+                        <li>High-volume data streaming</li>
+                        <li>Layout-aware Multimodal OCR</li>
+                      </ul>
+                      Converts chaotic multi-modal inputs (Excel ledger dumps, scanned bank letters, handwritten cash
+                      certificates) into verified, strongly typed data primitives.
+                    </div>
+                  </div>
+                </div>
+                <!-- Associate -->
+                <div class="r-step">
+                  <div class="r-vertical">Associate</div>
+                  <div class="r-step-default">
+                    <div class="r-role">Associate</div>
+                    <div class="r-calls">Stages 3A/B/C</div>
+                    <div class="r-art">Evidence Graph</div>
+                  </div>
+                  <div class="r-step-expanded">
+                    <div class="r-exp-left">
+                      <div class="r-role" style="font-size: 15px;">Associate / Auditor</div>
+                      <div class="r-calls">Calls 3, 4, 5, 6 ── [Concurrent]</div>
+                      <div class="r-art">Evidence Graph Nodes</div>
+                    </div>
+                    <div class="r-exp-divider"></div>
+                    <div class="r-exp-right">
+                      <ul>
+                        <li>Semantic NLP cross-referencing</li>
+                        <li>Programmatic script execution</li>
+                      </ul>
+                      Evaluates the structured data primitives against the rigid statutory guardrails of the Income Tax
+                      Act. It flags numerical variances, period-shifting temporal anomalies, and regulatory deviations.
+                    </div>
+                  </div>
+                </div>
+                <!-- Manager -->
+                <div class="r-step">
+                  <div class="r-vertical">Manager</div>
+                  <div class="r-step-default">
+                    <div class="r-role">Manager</div>
+                    <div class="r-calls">Stages 4 & 5</div>
+                    <div class="r-art">Resolved Graph</div>
+                  </div>
+                  <div class="r-step-expanded">
+                    <div class="r-exp-left">
+                      <div class="r-role" style="font-size: 15px;">Manager</div>
+                      <div class="r-calls">Review & Call 7 ── [Sequential]</div>
+                      <div class="r-art">Resolved Graph State</div>
+                    </div>
+                    <div class="r-exp-divider"></div>
+                    <div class="r-exp-right">
+                      <ul>
+                        <li>State machine verification</li>
+                        <li>Cross-document contradiction routing</li>
+                      </ul>
+                      The parallel streams terminate here. The Manager engine analyzes the fully compiled Evidence Graph
+                      to catch cross-module logical contradictions and generates the definitive going concern trend
+                      line.
+                    </div>
+                  </div>
+                </div>
+                <!-- CA Sign-Off -->
+                <div class="r-step">
+                  <div class="r-vertical">CA Sign-Off</div>
+                  <div class="r-step-default">
+                    <div class="r-role">CA Sign-Off</div>
+                    <div class="r-calls">Stages 6 & 7</div>
+                    <div class="r-art">Form No. 26</div>
+                  </div>
+                  <div class="r-step-expanded">
+                    <div class="r-exp-left">
+                      <div class="r-role" style="font-size: 15px;">CA Sign-Off</div>
+                      <div class="r-calls">CA Sign-Off ── [Final Gate]</div>
+                      <div class="r-art">Signed Form 26</div>
+                    </div>
+                    <div class="r-exp-divider"></div>
+                    <div class="r-exp-right">
+                      <ul>
+                        <li>Pixel-precise lineage interface</li>
+                      </ul>
+                      The final human accountant reviews a fully verified, un-hallucinated dataset. Because every output
+                      text string in the Form 26 is hard-linked directly back to its source pixel or database row, the
+                      Auditor can confidently apply final professional judgment.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEMPORALITY PANEL (UPDATED FOR AUDIT) -->
+        <div class="dim-panel" id="p-temporality">
+          <div class="dim-content">
+            <div class="dim-title">Temporality: Chronological Lifecycles</div>
+            <div class="dim-desc">
+              Constructs rigid chronological lifecycles from scattered dates across thousands of unstructured pages,
+              invoices, or financial ledgers.<br><br>
+              It connects temporal dependencies across distinct documents to automatically flag violations of financial
+              cut-off dates, statutory filing windows, or out-of-sequence transactions, anchoring data to a hard
+              temporal baseline.
+            </div>
+          </div>
+          <div class="dim-visual" style="flex-direction: column;">
+            <div class="v-temp-track">
+              <div class="v-temp-label">Chronology Extraction</div>
+              <div class="v-temp-bar">
+                <div class="v-temp-fill"></div>
+              </div>
+            </div>
+            <div class="v-temp-track">
+              <div class="v-temp-label">Dependency Mapping</div>
+              <div class="v-temp-bar">
+                <div class="v-temp-fill" style="animation-delay: 0.2s;"></div>
+              </div>
+            </div>
+            <div class="v-temp-track" style="margin-top: 10px;">
+              <div class="v-temp-label" style="color:var(--red);">Violation Flagged</div>
+              <div class="v-temp-bar">
+                <div class="v-temp-fill" style="background:var(--red); width:100%; animation:none;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('dimToggles').addEventListener('click', (e) => {
+      if (e.target.tagName !== 'BUTTON') return;
+
+      // Update buttons
+      document.querySelectorAll('#dimToggles button').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+
+      // Update panels
+      const dim = e.target.getAttribute('data-dim');
+      document.querySelectorAll('.dim-panel').forEach(p => {
+        p.classList.remove('active');
+        // re-trigger animation
+        p.style.animation = 'none';
+        p.offsetHeight; /* trigger reflow */
+        p.style.animation = null;
+      });
+      document.getElementById('p-' + dim).classList.add('active');
+    });
+  </script>
+</body>
+
+</html>

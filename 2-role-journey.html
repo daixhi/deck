@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jhana.ai Audit — Who Signs What</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg-0: #0A130F;
+      --ink: #F1F3EC;
+      --ink-dim: rgba(241, 243, 236, 0.6);
+      --ink-faint: rgba(170, 182, 172, 0.5);
+      --line: rgba(255, 255, 255, 0.09);
+      --line-soft: rgba(255, 255, 255, 0.05);
+      --accent: #3FAE7A;
+      --accent-bg: rgba(63, 174, 122, 0.09);
+      --accent-border: rgba(63, 174, 122, 0.28);
+      --indigo: #D926A9;
+      --indigo-bg: rgba(217, 38, 169, 0.09);
+      --gold: #C99A3D;
+      --gold-bg: rgba(201, 154, 61, 0.09);
+      --paper: #EDEAE0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "IBM Plex Serif", Georgia, serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1000px 600px at 84% -6%, rgba(63, 174, 122, 0.12), transparent 58%),
+        radial-gradient(800px 500px at 8% 106%, rgba(217, 38, 169, 0.07), transparent 60%),
+        linear-gradient(178deg, #101c17 0%, #0c1611 30%, var(--bg-0) 70%);
+      min-height: 100vh;
+      padding: 84px 6vw 60px;
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .mono {
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    .eyebrow {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: clamp(28px, 4.2vw, 46px);
+      font-weight: 600;
+      line-height: 1.16;
+      letter-spacing: -0.01em;
+      margin: 0 0 14px;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .sub {
+      text-align: center;
+      font-size: 14px;
+      font-style: italic;
+      color: var(--ink-faint);
+      max-width: 560px;
+      margin: 0 auto 22px;
+      line-height: 1.5;
+    }
+
+    /* ── Role rail ── */
+    .role-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 2px;
+      margin-bottom: 8px;
+    }
+
+    .role-toggle button {
+      all: unset;
+      cursor: pointer;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      border: 1px solid var(--line);
+      border-bottom: none;
+      color: var(--ink-faint);
+      background: rgba(255, 255, 255, 0.02);
+      transition: color .3s, background .3s;
+    }
+
+    .role-toggle button:first-child {
+      border-radius: 10px 0 0 0;
+    }
+
+    .role-toggle button:last-child {
+      border-radius: 0 10px 0 0;
+    }
+
+    .role-toggle button.active {
+      color: var(--accent);
+      background: var(--accent-bg);
+    }
+
+    .role-panel {
+      border: 1px solid var(--line);
+      border-radius: 0 10px 10px 10px;
+      background: rgba(255, 255, 255, 0.015);
+      padding: 30px 32px 26px;
+      margin-bottom: 10px;
+    }
+
+    .role-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+      padding-bottom: 16px;
+      border-bottom: 1px dashed var(--line);
+    }
+
+    .role-name {
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .role-sub {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      color: var(--ink-faint);
+      margin-top: 3px;
+      letter-spacing: 0.02em;
+    }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .role-col-label {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 10px;
+    }
+
+    .role-col.before .role-col-label {
+      color: #C0392B;
+      opacity: 0.75;
+    }
+
+    .role-col.after .role-col-label {
+      color: var(--accent);
+    }
+
+    .role-line {
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--ink-dim);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .role-line:last-child {
+      border-bottom: none;
+    }
+
+    .role-line b {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .fade {
+      animation: fadeIn .4s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(3px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ── section dividers ── */
+    .section {
+      margin-top: 68px;
+      padding-top: 44px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-head {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .section-kicker {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 9.5px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: 21px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .section-note {
+      font-size: 12.5px;
+      color: var(--ink-faint);
+      font-style: italic;
+      margin-top: 6px;
+    }
+
+
+    /* ── pipeline trail ── */
+    .trail {
+      position: relative;
+      padding-left: 30px;
+    }
+
+    .trail::before {
+      content: '';
+      position: absolute;
+      left: 9px;
+      top: 4px;
+      bottom: 4px;
+      width: 1px;
+      background: var(--line);
+    }
+
+    .tstage {
+      position: relative;
+      padding-bottom: 30px;
+    }
+
+    .tstage:last-child {
+      padding-bottom: 0;
+    }
+
+    .tdot {
+      position: absolute;
+      left: -30px;
+      top: 1px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--bg-0);
+      border: 1.5px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .tname {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .tdesc {
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: var(--ink-dim);
+      margin-bottom: 7px;
+    }
+
+    .tproof {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      color: var(--ink-faint);
+      line-height: 1.5;
+    }
+
+    .tproof b {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .tbranch {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .tbranch-card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 13px 15px;
+      background: rgba(255, 255, 255, 0.015);
+    }
+
+    .tbranch-card .tname {
+      font-size: 12.5px;
+      margin-bottom: 5px;
+    }
+
+    .tbranch-card .tdesc {
+      font-size: 11.5px;
+      margin-bottom: 8px;
+    }
+
+    .tbranch-card .tproof {
+      font-size: 9.5px;
+    }
+
+    /* ── honest comparison: ephemeral session vs. persistent graph node ── */
+    .cmp-tabs {
+      display: flex;
+      gap: 2px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    .cmp-tabs button {
+      all: unset;
+      cursor: pointer;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--ink-faint);
+      transition: color .3s, background .3s, border-color .3s;
+    }
+
+    .cmp-tabs button.active {
+      color: var(--accent);
+      background: var(--accent-bg);
+      border-color: var(--accent-border);
+    }
+
+    .cmp-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .term-card {
+      position: relative;
+      background: rgba(6, 10, 8, 0.75);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 190px;
+    }
+
+    .term-head {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .term-head span:not(.term-label) {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .term-label {
+      margin-left: auto;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 8.5px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .term-body {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      color: rgba(240, 241, 246, 0.72);
+      padding: 18px 18px 30px;
+      flex: 1;
+    }
+
+    .term-fade {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 46px;
+      background: linear-gradient(180deg, transparent, rgba(6, 10, 8, 0.95));
+      pointer-events: none;
+    }
+
+    .term-fade::after {
+      content: 'session ends — nothing carries forward';
+      position: absolute;
+      left: 14px;
+      bottom: 6px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 8px;
+      letter-spacing: 0.03em;
+      color: var(--ink-faint);
+      font-style: italic;
+    }
+
+    .graph-card {
+      position: relative;
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid var(--accent-border);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      min-height: 190px;
+      padding: 22px 18px 34px;
+    }
+
+    .graph-node-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-bg);
+      margin-bottom: 14px;
+    }
+
+    .graph-body {
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: var(--ink);
+      flex: 1;
+    }
+
+    .graph-link {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 14px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--accent-border);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 9.5px;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+
+    /* ── proof section: real, existing product traction ── */
+    .proof-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .proof-card {
+      border: 1px solid var(--accent-border);
+      border-radius: 12px;
+      padding: 22px 22px 20px;
+      background: rgba(63, 174, 122, 0.04);
+    }
+
+    .proof-tag {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .proof-quote {
+      font-size: 14px;
+      font-style: italic;
+      line-height: 1.55;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+
+    .proof-attr {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      color: var(--ink-faint);
+      letter-spacing: 0.02em;
+    }
+
+    .proof-body {
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: var(--ink-dim);
+    }
+
+    /* ── FDE steps ── */
+    .fde-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .fde-step {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .fde-step:last-child {
+      border-bottom: none;
+    }
+
+    .fde-num {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      border: 1px solid var(--accent-border);
+      background: var(--bg-0);
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fde-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .fde-body {
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: var(--ink-dim);
+    }
+
+    /* ── seal / sign-off ── */
+    .seal-wrap {
+      margin-top: 74px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+
+    .seal-wrap.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .seal-line {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      color: var(--ink-faint);
+      margin-top: 14px;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .seal-line b {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    @media (max-width: 760px) {
+
+      .proof-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .role-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .role-meta {
+        flex-direction: column;
+      }
+
+      .tbranch {
+        grid-template-columns: 1fr;
+      }
+
+      .pmatrix {
+        font-size: 11px;
+      }
+
+      .pmatrix td:first-child {
+        width: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="eyebrow">jhana.ai · same trusted impact, now also for auditors</div>
+    <h1>Weeks of reconciliation. <em>Compressed strategically using jhana.ai </em></h1>
+    <p class="sub">Ledger, GST, and 26AS matching, statutory research, and cross-checked findings — compressed into one
+      traceable Evidence Graph. Every figure still traces back to its source document and page. The Chartered Accountant
+      still reviews it, still signs it.</p>
+
+    <!-- ═══ ROLE JOURNEY ═══ -->
+    <div class="role-toggle" id="roleToggle">
+      <button data-role="analyst" class="active">Analyst</button>
+      <button data-role="manager">Manager</button>
+      <button data-role="ca">Chartered Accountant</button>
+    </div>
+
+    <div class="role-panel">
+      <div class="role-meta">
+        <div>
+          <div class="role-name" id="rName"></div>
+          <div class="role-sub" id="rSub"></div>
+        </div>
+      </div>
+      <div class="role-grid fade" id="rGrid"></div>
+    </div>
+
+    <!-- ═══ PROOF: THIS ISN'T HYPOTHETICAL ═══ -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-kicker">Already shipping</div>
+        <div class="section-title">CAs and financial documents already run through jhana</div>
+        <div class="section-note">Everything above this line describes a build. Everything below it already ships, under
+          the product name Suit.</div>
+      </div>
+      <div class="proof-grid">
+        <div class="proof-card">
+          <div class="proof-tag">Tax &amp; Compliance · Live Case Study</div>
+          <div class="proof-quote">"…picked the right §149 clause"</div>
+          <div class="proof-attr">— Pranay Shah, Partner, CNGSN &amp; Associates LLP</div>
+          <div class="proof-body" style="margin-top:10px;">Uploaded notices and orders; jhana.aicomputed elapsed time
+            from
+            AY-end, applied the ₹50-lakh threshold, and linked the computation to the exact source page.</div>
+        </div>
+        <div class="proof-card">
+          <div class="proof-tag">Financial Disputes · Live Case Study</div>
+          <div class="proof-body">Banking &amp; MSME dispute redressal — loan agreements, correspondence, and regulatory
+            filings ingested and cross-referenced. MSME principals get structured summaries; banks get compliance-ready
+            documentation. What took roughly 45 minutes by hand now runs automatically.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PIPELINE ═══ -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-kicker">The pipeline</div>
+        <div class="section-title">Scan to signed Form No. 26</div>
+        <div class="section-note">Every stage marked with what it already runs on in production today.</div>
+      </div>
+      <div class="trail">
+        <div class="tstage">
+          <div class="tdot">1</div>
+          <div class="tname">Vision scan</div>
+          <div class="tdesc">Scanned invoices, bank statements, notices, board minutes — read straight off the page,
+            handwriting included.</div>
+          <div class="tproof">Runs on: <b>Courtroom's filing-defect vision scrutiny</b></div>
+        </div>
+        <div class="tstage">
+          <div class="tdot">2</div>
+          <div class="tname">Schema mapping</div>
+          <div class="tdesc">Typed against known statutory templates — GSTIN, TAN, ledger head, account movement. AI
+            steps in only for a layout that doesn't match any template.</div>
+          <div class="tproof">Runs on: <b>PubSec's bulk ingestion</b> across any format, any language</div>
+        </div>
+        <div class="tstage">
+          <div class="tdot">3</div>
+          <div class="tname">Three parallel tracks</div>
+          <div class="tdesc">Numbers-reconciliation, numbers-judgment, and legal-compliance run at once — nothing waits
+            on the other two.</div>
+          <div class="tbranch">
+            <div class="tbranch-card">
+              <div class="tname">System reconciliation</div>
+              <div class="tdesc">Books vs. bank, books vs. GSTN, books vs. 26AS — join-and-flag, no model in the loop.
+              </div>
+              <div class="tproof">Runs on: <b>the same "matched, not guessed" logic</b> behind Courtroom's roster/IA
+                matching and PubSec's eligibility checks</div>
+            </div>
+            <div class="tbranch-card">
+              <div class="tname">AI interpretation</div>
+              <div class="tdesc">Inventory valuation, revenue-recognition timing, depreciation judgment — only the
+                exceptions the system flagged.</div>
+              <div class="tproof">Runs on: <b>the same reasoning engine</b> behind Courtroom's clerk-grade briefs</div>
+            </div>
+            <div class="tbranch-card">
+              <div class="tname">Legal &amp; risk</div>
+              <div class="tdesc">Sec 188/197, CARO clauses, litigation and contingent-liability scan.</div>
+              <div class="tproof">Runs on: <b>Courtroom's citation research</b> over the National Legal Archive</div>
+            </div>
+          </div>
+        </div>
+        <div class="tstage">
+          <div class="tdot">4</div>
+          <div class="tname">Evidence Graph merge</div>
+          <div class="tdesc">All three tracks' findings linked to their source artifact, with cross-track contradiction
+            checks — does the litigation entry match how it's treated in the financials?</div>
+          <div class="tproof">Runs on: <b>Law-Verifiers'</b> logic-graph contradiction detection</div>
+        </div>
+        <div class="tstage">
+          <div class="tdot">5</div>
+          <div class="tname">Manager review</div>
+          <div class="tdesc">Contradictions and exceptions surfaced prominently — the manager reviews flags, not the
+            whole file over again.</div>
+          <div class="tproof">Runs on: <b>the same Clerk/Paralegal review tier</b> already live in Courtroom, and
+            PubSec's Reviewing Officer dashboard</div>
+        </div>
+        <div class="tstage">
+          <div class="tdot">6</div>
+          <div class="tname">Going concern</div>
+          <div class="tdesc">A single sequential read across the whole reviewed graph — the one call that has to wait
+            for everything above it to finish.</div>
+          <div class="tproof">New synthesis call — same call architecture as every stage above it</div>
+        </div>
+        <div class="tstage">
+          <div class="tdot">7</div>
+          <div class="tname">Sign-off</div>
+          <div class="tdesc">Form No. 26, Part D(Parts A–K), fully populated and clause-mapped. The Chartered Accountant
+            reviews
+            and signs.</div>
+          <div class="tproof">Runs on: <b>the same role-tiered sign-off model</b> already live at 5+ courts and 3+
+            ministries</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ HONEST COMPARISON ═══ -->
+    <div class="section">
+      <div class="section-head" style="margin-bottom: 24px;">
+        <div class="section-kicker">Same class of model underneath</div>
+        <div class="section-title">What a general-purpose agent gets right, and where it stops</div>
+      </div>
+
+      <div class="cmp-tabs" id="cmpTabs">
+        <button data-c="0" class="active">Indexing</button>
+        <button data-c="1">Reading documents</button>
+        <button data-c="2">Determinism</button>
+        <button data-c="3">Currency</button>
+        <button data-c="4">Traceability</button>
+        <button data-c="5">Vertical collaboration</button>
+      </div>
+
+      <div class="cmp-pair">
+        <div class="term-card">
+          <div class="term-head"><span></span><span></span><span></span><span class="term-label">general-purpose
+              AI</span></div>
+          <div class="term-body" id="cmpTerm"></div>
+          <div class="term-fade"></div>
+        </div>
+        <div class="graph-card">
+          <div class="graph-node-dot"></div>
+          <div class="graph-body" id="cmpGraph"></div>
+          <div class="graph-link" id="cmpLink"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ FDE ═══ -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-kicker">Before a line of code</div>
+        <div class="section-title">What your Forward-Deployed Engineer actually does</div>
+        <div class="section-note">No two firms reconcile the same way. Before any of this touches a live engagement, we
+          map your actual chart of accounts, your vendor formats, your GSTN and TRACES feeds — not a template.</div>
+      </div>
+      <div class="fde-list" id="fdeList"></div>
+    </div>
+
+    <!-- ═══ SEAL ═══ -->
+    <div class="seal-wrap" id="sealWrap">
+      <svg width="132" height="132" viewBox="0 0 132 132" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="66" cy="66" r="60" stroke="#3FAE7A" stroke-width="1.4" stroke-dasharray="3 3" opacity="0.55" />
+        <circle cx="66" cy="66" r="50" stroke="#3FAE7A" stroke-width="1" opacity="0.35" />
+        <path id="topArc" fill="none" d="M 16 66 A 50 50 0 0 1 116 66" />
+        <path id="botArc" fill="none" d="M 24 66 A 42 42 0 0 0 108 66" />
+        <text font-family="JetBrains Mono, monospace" font-size="7.2" font-weight="700" fill="#3FAE7A">
+          <textPath href="#topArc" startOffset="50%" text-anchor="middle" textLength="118"
+            lengthAdjust="spacingAndGlyphs">EVIDENCE GRAPH · TRACED</textPath>
+        </text>
+        <text font-family="JetBrains Mono, monospace" font-size="6.4" font-weight="600" fill="#3FAE7A" opacity="0.7">
+          <textPath href="#botArc" startOffset="50%" text-anchor="middle" textLength="108"
+            lengthAdjust="spacingAndGlyphs">FORM NO. 26 · PART A – K</textPath>
+        </text>
+        <text x="66" y="66" text-anchor="middle" dominant-baseline="middle" font-family="IBM Plex Serif, serif"
+          font-style="italic" font-size="15" fill="#F1F3EC">
+          <tspan x="66" dy="-6">Reviewed</tspan>
+          <tspan x="66" dy="18">&amp; Signed</tspan>
+        </text>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    const ROLES = {
+      analyst: {
+        name: 'Analyst / Associate',
+        sub: 'reconciliation, vouching, statutory arithmetic',
+        before: [
+          'Manually matches ledger to bank, GST 2A/2B, and 26AS line by line.',
+          'Vouches expense samples and ages debtors/creditors by hand.',
+          'Re-keys the same figures across a dozen working papers.',
+        ],
+        after: [
+          '<b>System reconciliation</b> runs the matching as code — seconds to low minutes, not days.',
+          'Only the <b>exceptions list</b> reaches a person: what didn\'t match, flagged for judgment.',
+          'Every match is <b>reproducible</b> — the same inputs give the same output, on request.',
+        ]
+      },
+      manager: {
+        name: 'Manager',
+        sub: 'exceptions review, cross-track sign-off',
+        before: [
+          'Re-reads the whole file to find what the team may have missed.',
+          'Manually cross-checks litigation register against financial treatment.',
+          'Chases down whether a CARO clause and a statutory-dues schedule agree.',
+        ],
+        after: [
+          'Contradictions are <b>surfaced</b>, not buried — the graph flags where litigation risk isn\'t reflected in the financials.',
+          'Review time goes to judgment calls, not to re-deriving what the team already checked.',
+          'Every flag is <b>click-back traceable</b> to its source working paper.',
+        ]
+      },
+      ca: {
+        name: 'Chartered Accountant',
+        sub: 'going concern, opinion, signature',
+        before: [
+          'Signs the opinion trusting that upstream work was done correctly.',
+          'Going-concern assessment is a narrative built from scattered memos.',
+          'Liability for the number sits with you — the checking sat with everyone else.',
+        ],
+        after: [
+          'Signs from an <b>Evidence Graph</b>: every clause clickable back to source document, page, and call.',
+          'Going concern is a <b>sequential final read</b> across the whole reviewed graph — not a fresh narrative.',
+          'The tool changes what got checked before it reached you. <b>The signature is still yours.</b>',
+        ]
+      }
+    };
+
+    function renderRole(key) {
+      const r = ROLES[key];
+      document.getElementById('rName').textContent = r.name;
+      document.getElementById('rSub').textContent = r.sub;
+      const grid = document.getElementById('rGrid');
+      grid.innerHTML = `
+        <div class="role-col before">
+          <div class="role-col-label">Today</div>
+          ${r.before.map(l => `<div class="role-line">${l}</div>`).join('')}
+        </div>
+        <div class="role-col after">
+          <div class="role-col-label">With jhana.ai</div>
+          ${r.after.map(l => `<div class="role-line">${l}</div>`).join('')}
+        </div>`;
+      grid.classList.remove('fade'); void grid.offsetWidth; grid.classList.add('fade');
+    }
+
+    document.getElementById('roleToggle').addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      document.querySelectorAll('#roleToggle button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderRole(btn.dataset.role);
+    });
+    renderRole('analyst');
+
+    const FDE = [
+      ['Map your reconciliation process first', 'Before any code, we document your firm\'s actual chart of accounts, materiality thresholds, and scrutiny checklists — the same discipline used before any court digitization. Naive automation immortalizes bad process; mapping prevents it.'],
+      ['Wire the engine to your real feeds', 'Your GSTN, TRACES, MCA, and bank formats have their own quirks. The FDE builds the reconciliation engine against your actual data — not a sample schema.'],
+      ['Migrate the historical ledger', 'Prior years\' data, naming-convention drift between systems, and the edge cases a generic installer won\'t touch.'],
+      ['Train the chain, not just the tool', 'Analyst, manager, and the signing CA each trust the system differently. Onboarding runs at all three tiers, and we stay until the team can run without us.'],
+    ];
+    document.getElementById('fdeList').innerHTML = FDE.map(([t, b], i) => `
+      <div class="fde-step">
+        <div class="fde-num">0${i + 1}</div>
+        <div>
+          <div class="fde-title">${t}</div>
+          <div class="fde-body">${b}</div>
+        </div>
+      </div>`).join('');
+
+    const CMP = [
+      {
+        tab: 'Indexing',
+        term: [
+          'Processes text at the same raw speed,',
+          'but cannot structure or index a full ledger.',
+          'Achieving this scale of concurrent indexing',
+          'requires building a custom software pipeline.',
+        ],
+        graph: 'Indexing speed — weeks → couple hours of machine time. The pipeline indexes the entire ledger, GST, and 26AS concurrently, structuring a connected graph without waiting on prompts.',
+        link: '→ structural indexing, not just fast reading',
+      },
+      {
+        tab: 'Reading documents',
+        term: [
+          'Reads the invoice, the contract, the notice —',
+          'reasons about them genuinely well.',
+          'That reasoning lives in the chat window.',
+          'Ask again tomorrow: different wording,',
+          'sometimes a different answer.',
+        ],
+        graph: 'jhana\'s OCR actually reads documents better than general AI — it is trained specifically for that purpose. The gap isn\'t just in the read. It\'s in what survives after the read is done.',
+        link: '→ the read becomes a working paper, not a chat log',
+      },
+      {
+        tab: 'Determinism',
+        term: [
+          'Matches ledger to bank, GST 2A/2B, 26AS —',
+          'by reasoning it out, not by rule.',
+          'Confident this time. Re-run tomorrow,',
+          'on the same files, and the number can move.',
+          'Two runs are never guaranteed to agree.',
+        ],
+        graph: 'Determinism — same inputs, same output. This is a systems model, not just a language model. Reconciliation runs as code — books vs. bank, books vs. GSTN, books vs. 26AS are matched deterministically. Everything can be traced back to the source, with accountability built in.',
+        link: '→ feeds Clause 34 — reproducible on request, not re-derived',
+      },
+      {
+        tab: 'Currency',
+        term: [
+          'Cites Sec 188, CARO clauses — from training',
+          'data, plus whatever you pasted in this session.',
+          'Can\'t confirm if a circular issued last week',
+          'changed the position.',
+          'No way to check its own citation against a live source.',
+        ],
+        graph: 'Currency — law indexed daily, not memorized. Grounded in a corpus indexed daily — Companies Act, Ind AS, ICAI guidance, ITAT rulings — the same corpus already cited from across 5+ courts. Every citation traces to the current provision, not a remembered one.',
+        link: '→ feeds Clause 23 — cited from a live source, not a memory',
+      },
+      {
+        tab: 'Traceability',
+        term: [
+          'Session closes. What remains is a chat',
+          'transcript — not indexed, not click-through.',
+          'Nothing a peer reviewer can open and trace.',
+          'Seven years from now, it\'s a screenshot, if that.',
+        ],
+        graph: 'Every figure in the signed Form No. 26 clicks back to its source document, page, and the exact call that derived it — an Evidence Graph built to survive the engagement, not just the session.',
+        link: '→ Clause 45(a)–(d) traces to loan register, p.12, Call 5',
+      },
+      {
+        tab: 'Vertical collaboration',
+        term: [
+          'Lives in one person\'s chat history,',
+          'on one machine.',
+          'The manager sees what got pasted to them —',
+          'not what actually happened.',
+          'The signing partner sees even less.',
+        ],
+        graph: 'Vertical collaboration — one graph, three sign-off tiers. Analyst, manager, and the signing CA query the same Evidence Graph — one shared record, not three private sessions stitched together by hand before sign-off.',
+        link: '→ one node, three sign-off tiers, one source of truth',
+      },
+    ];
+
+    function renderCmp(i) {
+      const c = CMP[i];
+      document.getElementById('cmpTerm').innerHTML = c.term.join('<br>');
+      document.getElementById('cmpGraph').textContent = c.graph;
+      document.getElementById('cmpLink').textContent = c.link;
+      ['cmpTerm', 'cmpGraph'].forEach(id => {
+        const el = document.getElementById(id);
+        el.parentElement.classList.remove('fade');
+        void el.parentElement.offsetWidth;
+        el.parentElement.classList.add('fade');
+      });
+    }
+
+    document.getElementById('cmpTabs').addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      document.querySelectorAll('#cmpTabs button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderCmp(Number(btn.dataset.c));
+    });
+    renderCmp(0);
+
+    const sealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in-view'); });
+    }, { threshold: 0.4 });
+    sealObserver.observe(document.getElementById('sealWrap'));
+  </script>
+  <style>
+    .jhana-watermark {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 32px;
+      height: 32px;
+      opacity: 0.3;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+      z-index: 9999;
+    }
+
+    .jhana-watermark:hover {
+      opacity: 1;
+      transform: scale(1.3);
+    }
+
+    .jhana-watermark svg {
+      width: 100%;
+      height: auto;
+      overflow: visible;
+    }
+
+    .jhana-line {
+      fill: none;
+      stroke: #4CAF7D;
+      stroke-width: 35;
+      stroke-linecap: round;
+      opacity: 0;
+    }
+
+    .jhana-fill-path {
+      fill: #4CAF7D;
+      opacity: 1;
+    }
+
+    .jhana-dot-path {
+      fill: #4CAF7D;
+      opacity: 1;
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+  </style>
+
+  <div id="jhana-watermark" class="jhana-watermark">
+    <svg id="jhana-icon-wm" viewBox="0 0 552 548">
+      <path id="jhana-line-wm" class="jhana-line"
+        d="M 265.5 242.0 C 265.6 245.8 265.9 256.2 266.0 264.5 C 266.1 272.8 266.0 282.5 266.0 291.5 C 266.0 300.5 266.0 309.5 266.0 318.5 C 266.0 327.5 266.1 336.5 266.0 345.5 C 265.9 354.5 266.0 363.5 265.5 372.5 C 265.0 381.5 264.8 390.5 263.0 399.5 C 261.2 408.5 260.3 418.2 255.0 426.5 C 249.7 434.8 239.5 444.3 231.0 449.5 C 222.5 454.7 213.0 456.5 204.0 457.5 C 195.0 458.5 186.0 457.4 177.0 455.5 C 168.0 453.6 159.0 450.2 150.0 446.0 C 141.0 441.8 132.0 436.4 123.0 430.0 C 114.0 423.6 104.3 415.8 96.0 407.5 C 87.7 399.2 79.5 389.5 73.0 380.5 C 66.5 371.5 61.6 362.5 57.0 353.5 C 52.4 344.5 48.7 335.5 45.5 326.5 C 42.3 317.5 39.8 308.5 38.0 299.5 C 36.2 290.5 35.2 281.5 34.5 272.5 C 33.8 263.5 33.7 254.5 34.0 245.5 C 34.3 236.5 35.1 227.5 36.5 218.5 C 37.9 209.5 39.8 200.5 42.5 191.5 C 45.2 182.5 48.5 173.5 52.5 164.5 C 56.5 155.5 60.8 146.5 66.5 137.5 C 72.2 128.5 78.8 119.3 86.5 110.5 C 94.2 101.7 103.7 92.1 112.5 84.5 C 121.3 76.9 130.5 70.6 139.5 65.0 C 148.5 59.4 157.5 55.1 166.5 51.0 C 175.5 46.9 184.5 43.3 193.5 40.5 C 202.5 37.7 211.5 35.6 220.5 34.0 C 229.5 32.4 238.5 31.5 247.5 31.0 C 256.5 30.5 265.5 30.5 274.5 31.0 C 283.5 31.5 292.5 32.4 301.5 34.0 C 310.5 35.6 319.5 37.8 328.5 40.5 C 337.5 43.2 346.5 46.5 355.5 50.5 C 364.5 54.5 373.5 59.0 382.5 64.5 C 391.5 70.0 400.6 76.1 409.5 83.5 C 418.4 90.9 428.1 100.2 436.0 109.0 C 443.9 117.8 450.8 127.0 457.0 136.0 C 463.2 145.0 468.5 154.0 473.0 163.0 C 477.5 172.0 480.8 181.0 484.0 190.0 C 487.2 199.0 489.9 208.0 492.0 217.0 C 494.1 226.0 495.5 235.0 496.5 244.0 C 497.5 253.0 498.0 262.0 498.0 271.0 C 498.0 280.0 497.3 289.0 496.5 298.0 C 495.7 307.0 494.8 316.0 493.0 325.0 C 491.2 334.0 488.5 343.0 485.5 352.0 C 482.5 361.0 479.2 370.0 475.0 379.0 C 470.8 388.0 466.2 397.0 460.5 406.0 C 454.8 415.0 448.5 424.1 441.0 433.0 C 433.5 441.9 424.2 451.6 415.5 459.5 C 406.8 467.4 397.5 474.2 388.5 480.5 C 379.5 486.8 370.5 492.2 361.5 497.0 C 352.5 501.8 343.5 505.6 334.5 509.0 C 325.5 512.4 316.5 515.2 307.5 517.5 C 298.5 519.8 289.5 521.7 280.5 523.0 C 271.5 524.3 262.5 525.2 253.5 525.5 C 244.5 525.8 235.5 525.6 226.5 525.0 C 217.5 524.4 208.5 523.5 199.5 522.0 C 190.5 520.5 181.5 518.5 172.5 516.0 C 163.5 513.5 154.5 510.4 145.5 507.0 C 136.5 503.6 123.0 497.4 118.5 495.5" />
+      <g transform="translate(0,548) scale(0.1,-0.1)">
+        <path id="jhana-fill-path-wm" class="jhana-fill-path" d="M2402 5339 c-136 -10 -276 -35 -448 -78 -95 -24 -288 -97 -409 -155
+        -607 -292 -1053 -793 -1264 -1423 -136 -406 -159 -896 -60 -1293 170 -682 601
+        -1233 1191 -1524 396 -195 703 -207 989 -40 217 128 343 298 394 534 38 177
+        40 229 40 995 l-1 750 -22 45 c-54 112 -200 134 -283 44 -51 -56 -51 -63 -39
+        -606 19 -793 0 -1114 -76 -1273 -34 -74 -126 -156 -234 -208 -85 -42 -85 -42
+        -200 -42 -141 0 -203 16 -385 100 -493 228 -883 714 -1029 1282 -54 209 -72
+        527 -42 745 93 671 498 1247 1097 1561 333 175 691 258 1054 244 344 -13 584
+        -73 890 -222 600 -292 1025 -829 1194 -1505 12 -49 26 -134 42 -250 13 -92 6
+        -555 -10 -625 -6 -27 -18 -86 -27 -130 -35 -175 -103 -368 -195 -555 -116
+        -235 -257 -430 -448 -620 -505 -503 -1231 -761 -1931 -685 -325 35 -554 100
+        -840 237 -58 28 -123 53 -145 55 -57 6 -114 -17 -150 -61 -27 -34 -30 -45 -30
+        -109 0 -106 17 -125 179 -203 710 -341 1517 -373 2236 -89 869 344 1502 1101
+        1676 2006 64 338 57 839 -16 1094 -4 17 -11 46 -15 65 -23 116 -115 360 -202
+        534 -127 254 -274 458 -483 666 -330 330 -689 538 -1160 670 -229 65 -551 91
+        -838 69z" />
+        <path id="jhana-dot-path-wm" class="jhana-dot-path" d="M2548 4431 c-70 -15 -163 -69 -217 -126 -73 -78 -113 -167 -119 -268
+        -8 -141 29 -244 123 -339 170 -172 446 -171 615 2 149 151 168 370 49 549 -44
+        66 -131 135 -209 165 -51 19 -186 29 -242 17z" />
+      </g>
+    </svg>
+  </div>
+
+  <script>
+    const wmIcon = document.getElementById('jhana-watermark');
+    const wmLine = document.getElementById('jhana-line-wm');
+    const wmFillPath = document.getElementById('jhana-fill-path-wm');
+    const wmDotPath = document.getElementById('jhana-dot-path-wm');
+    let isWmAnimating = false;
+
+    function runWmAnimation() {
+      if (isWmAnimating) return;
+      isWmAnimating = true;
+
+      const len = wmLine.getTotalLength();
+      wmLine.style.transition = 'none';
+      wmLine.style.strokeDasharray = len;
+      wmLine.style.strokeDashoffset = len;
+      wmLine.style.opacity = 1;
+
+      wmFillPath.style.transition = 'none';
+      wmFillPath.style.opacity = 0;
+
+      wmDotPath.style.transition = 'none';
+      wmDotPath.style.opacity = 0;
+      wmDotPath.style.transform = 'scale(0.4)';
+
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        wmLine.style.transition = 'stroke-dashoffset 1.6s ease-in-out';
+        wmLine.style.strokeDashoffset = '0';
+
+        setTimeout(() => {
+          wmFillPath.style.transition = 'opacity .2s linear';
+          wmFillPath.style.opacity = 1;
+        }, 1600);
+
+        setTimeout(() => {
+          wmLine.style.transition = 'opacity .2s linear';
+          wmLine.style.opacity = 0;
+        }, 1800);
+
+        setTimeout(() => {
+          wmDotPath.style.transition = 'opacity .3s ease, transform .3s cubic-bezier(.34,1.56,.64,1)';
+          wmDotPath.style.opacity = 1;
+          wmDotPath.style.transform = 'scale(1)';
+        }, 1900);
+
+        setTimeout(() => {
+          isWmAnimating = false;
+        }, 2200);
+      }));
+    }
+
+    if (wmIcon) {
+      wmIcon.addEventListener('mouseenter', runWmAnimation);
+    }
+  </script>
+</body>
+
+</html>
