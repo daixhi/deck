@@ -1834,6 +1834,26 @@
           { d: '19/01', p: 'EVID-DOC-004', a: '15,000' },
           { d: '21/01', p: 'EVID-DOC-005', a: '40,000' }
         ]
+      },
+      {
+        s1: 'Source 1: General Ledger (Cash Receipts)',
+        s2: 'Source 2: Income Tax Portal (SFT)',
+        h1: ['DATE', 'TRANSACTION REF', 'AMOUNT (₹)'],
+        h2: ['DATE', 'ACKNOWLEDGMENT NO', 'STATUS'],
+        tally: [
+          { d: '10/05', p: 'Receipt - Inv 101', a: '1,45,000' },
+          { d: '15/05', p: 'Receipt - Inv 109', a: '85,000' },
+          { d: '28/05', p: 'Receipt - Inv 142 (Cash)', a: '2,15,000', h: true },
+          { d: '30/05', p: 'Receipt - Inv 155', a: '90,000' },
+          { d: '12/06', p: 'Receipt - Inv 188', a: '1,10,000' }
+        ],
+        bank: [
+          { d: '-', p: 'Below Threshold', a: 'N/A' },
+          { d: '-', p: 'Below Threshold', a: 'N/A' },
+          { d: '28/05', p: 'ACK-9918273645', a: 'FILED', h: true },
+          { d: '-', p: 'Below Threshold', a: 'N/A' },
+          { d: '-', p: 'Below Threshold', a: 'N/A' }
+        ]
       }
     ];
 
@@ -2754,7 +2774,7 @@
     ${nodes}
     <circle cx="${cx}" cy="${cy}" r="8.5" fill="#12142A"/>
     <text x="${cx}" y="${cy - 0.8}" font-size="2.4" text-anchor="middle" fill="#fff" font-weight="800">FORM 26</text>
-    <text x="${cx}" y="${cy + 2.4}" font-size="2.2" text-anchor="middle" fill="#9AA6F5" font-weight="800">PART B</text>
+    <text x="${cx}" y="${cy + 2.4}" font-size="2.2" text-anchor="middle" fill="#9AA6F5" font-weight="800">PART ${state.part || 'D'}</text>
     ${labels}
   </svg>`;
 
@@ -3364,7 +3384,8 @@
       `;
 
       let mockIdx = 3; // Default
-      if (a.macro.includes('Call 1')) mockIdx = 0; // Reconciliation
+      if (a.key === 'stat_forms') mockIdx = 4; // SFT Reporting
+      else if (a.macro.includes('Call 1')) mockIdx = 0; // Reconciliation
       else if (a.macro.includes('Call 3')) mockIdx = 1; // Valuation
       else if (a.macro.includes('Call 5')) mockIdx = 2; // Compliance
 
@@ -3372,7 +3393,7 @@
       const ledger = JSON.parse(JSON.stringify(baseLedger));
 
       // Dynamically inject artifact details into the highlighted row
-      if (r) {
+      if (r && mockIdx !== 4) {
         const tIdx = ledger.tally.findIndex(x => x.h);
         if (tIdx >= 0) {
           ledger.tally[tIdx].p = r.name || ledger.tally[tIdx].p;
@@ -3390,7 +3411,8 @@
         '<strong style="color: #fff;">Automated Execution:</strong> The system ingested the messy ledger, mapped it against the unstructured bank statement, executed the reconciliation, and extracted this exact node as proof.',
         '<strong style="color: #fff;">Automated Execution:</strong> The system ingested the capitalization table, mapped it against the certified valuation report, validated the FMV computation, and extracted this exact node as proof.',
         '<strong style="color: #fff;">Automated Execution:</strong> The system ingested the statutory register, mapped it against the filed MCA returns, verified the fee paid and challans, and extracted this exact node as proof.',
-        '<strong style="color: #fff;">Automated Execution:</strong> The system ingested the internal records, mapped them against external evidence documents, executed a semantic validation, and extracted this exact node as proof.'
+        '<strong style="color: #fff;">Automated Execution:</strong> The system ingested the internal records, mapped them against external evidence documents, executed a semantic validation, and extracted this exact node as proof.',
+        '<strong style="color: #fff;">Automated Execution:</strong> The system continuously monitored the general ledger for high-value cash transactions, mapped it against the Income Tax e-Filing portal, verified the Form 61A acknowledgment, and extracted this exact node as proof.'
       ];
       document.getElementById('ledgerModalFooter').innerHTML = footers[mockIdx] || footers[0];
 
